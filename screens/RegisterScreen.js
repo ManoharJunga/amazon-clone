@@ -30,7 +30,7 @@ export default function RegisterScreen() {
 
             <KeyboardAvoidingView>
                 <View style={{ alignItems: 'center' }}>
-                    <Text style={{ fontSize: 17, fontWeight: "bold", marginTop: 12, color: "#041E42" }}>Login In to your Account</Text>
+                    <Text style={{ fontSize: 17, fontWeight: "bold", marginTop: 12, color: "#041E42" }}>Register to your Account</Text>
                 </View>
                 <View style={{ marginTop: 70 }}>
                     <View style={{
@@ -50,7 +50,7 @@ export default function RegisterScreen() {
                                 color: "gray",
                                 marginVertical: 10,
                                 width: 300,
-                                fontSize: password ? 16 : 16
+                                fontSize: name ? 16 : 16
                             }}
                             placeholder='enter your name'
                         />
@@ -76,7 +76,7 @@ export default function RegisterScreen() {
                                 color: "gray",
                                 marginVertical: 10,
                                 width: 300,
-                                fontSize: password ? 16 : 16
+                                fontSize: email ? 16 : 16
                             }}
                             placeholder='enter your Email'
                         />
@@ -101,7 +101,7 @@ export default function RegisterScreen() {
                             value={password}
                             onChangeText={(text) => setPassword(text)}
                             secureTextEntry={true}
-                            style={{ color: "gray", marginVertical: 10, width: 300 }}
+                            style={{ color: "gray", marginVertical: 10, width: 300, fontSize: password ? 16 : 16 }}
                             placeholder='enter your Password' />
                     </View>
                 </View>
@@ -115,7 +115,7 @@ export default function RegisterScreen() {
                 <Pressable style={{ width: 200, backgroundColor: "#FEBE10", borderRadius: 6, marginLeft: "auto", marginRight: "auto", padding: 15 }}>
                     <Text style={{ textAlign: "center", color: "white", fontSize: 16, fontWeight: "bold" }}>Register</Text>
                 </Pressable>
-                <Pressable onPress={() => navigation.navigate("Login")} style={{ marginTop: 15 }}>
+                <Pressable onPress={() => navigation.goBack()} style={{ marginTop: 15 }}>
                     <Text style={{ textAlign: "center", color: "grey", fontSize: 16 }}>Already Have an account? Sign in</Text>
                 </Pressable>
             </KeyboardAvoidingView>

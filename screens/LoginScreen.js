@@ -43,7 +43,7 @@ const LoginScreen = () => {
             <TextInput
               value={email}
               onChangeText={(text) => setEmail(text)}
-              style={{ color: "gray", marginVertical: 10, width: 300 }}
+              style={{ color: "gray", marginVertical: 10, width: 300, fontSize: email ? 16 : 16 }}
               placeholder='enter your Email' />
           </View>
         </View>

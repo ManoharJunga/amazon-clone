@@ -30,3 +30,14 @@ mongoose
 app.listen(port, () => {
     console.log("Server is running on port 8000")
 })
+
+
+
+app.post("/register", async(req,res) => {
+    try{
+
+    } catch(error){
+        console.log("error registering user", error);
+        res.status(500).json({message:"Registration failed"})
+    }
+})
