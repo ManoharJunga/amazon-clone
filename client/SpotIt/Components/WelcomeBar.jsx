@@ -31,7 +31,7 @@ const styles = {
     color: '#666666',
     backgroundColor: '#F5F5F5',
     alignItems: 'center',
-    padding: 10,
+    padding: 8,
     paddingLeft: 150,
     paddingRight: 150,
   },
