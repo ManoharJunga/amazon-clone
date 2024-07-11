@@ -1,42 +1,70 @@
-.panelText {
-    margin-top: 5px;
-    margin-bottom: 6px;
-    padding: 8px 9px;
-    white-space: nowrap;
-    font-size: 14px;
-    line-height: 12px;
-}
-
-.menuIcon {
-    background-image: url('https://m.media-amazon.com/images/G/31/gno/sprites/nav-sprite-global-2x-reorg-privacy._CB600086755_.png');
-    background-position-x: -172px;
-    background-position-y: -255px;
-    background-size: 350px;
-    cursor: pointer;
+.navPanel {
     display: flex;
-    height: 14px;
-    width: 18px;
+    width: 100%;
+    height: 60px;
+    align-items: center;
+    background-color: #333; /* Optional: Add background color */
+    color: white; /* Optional: Text color */
+    padding: 0 20px;
 }
 
 .allMenu {
     display: flex;
     flex-direction: row;
     align-items: center;
-    width: 58px;
-    height: 39px;
-    padding: 8px 9px;
-    border-radius: 0;
+    width: 68px; /* Adjusted width */
+    height: 50px; /* Adjusted height */
+    padding: 10px 12px; /* Adjusted padding */
+    border-radius: 4px; /* Adjusted border radius */
     color: white;
+    background-color: #444; /* Optional: Background color */
+    border: none;
 }
 
 .allMenu:hover {
     border: solid white 1px;
 }
 
-.panelText:hover {
-    border: solid white 1px;
-    margin-top: 1px;
-    margin-bottom: 1px;
-    padding: 12px 8px;
+.menuIcon {
+    font-size: 28px; /* Adjust the size of the menu icon */
+}
+
+.menuProfile {
+    display: flex;
+    align-items: center;
+}
+
+.userIcon {
+    font-size: 32px; /* Adjust the size of the user icon */
+    color: #3300FF;
+}
+
+.username {
+    margin-left: 10px;
+    font-size: 18px;
+    color: #3300FF;
+}
+
+.menuContainer {
+    padding: 20px;
+}
+
+.menuSection {
+    list-style: none;
+    padding: 0;
+}
+
+.heading {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.menuContent {
+    margin-bottom: 5px;
     cursor: pointer;
+    color: #007BFF;
+}
+
+.menuContent:hover {
+    text-decoration: underline;
 }
