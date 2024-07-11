@@ -1,0 +1,42 @@
+.panelText {
+    margin-top: 5px;
+    margin-bottom: 6px;
+    padding: 8px 9px;
+    white-space: nowrap;
+    font-size: 14px;
+    line-height: 12px;
+}
+
+.menuIcon {
+    background-image: url('https://m.media-amazon.com/images/G/31/gno/sprites/nav-sprite-global-2x-reorg-privacy._CB600086755_.png');
+    background-position-x: -172px;
+    background-position-y: -255px;
+    background-size: 350px;
+    cursor: pointer;
+    display: flex;
+    height: 14px;
+    width: 18px;
+}
+
+.allMenu {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 58px;
+    height: 39px;
+    padding: 8px 9px;
+    border-radius: 0;
+    color: white;
+}
+
+.allMenu:hover {
+    border: solid white 1px;
+}
+
+.panelText:hover {
+    border: solid white 1px;
+    margin-top: 1px;
+    margin-bottom: 1px;
+    padding: 12px 8px;
+    cursor: pointer;
+}
