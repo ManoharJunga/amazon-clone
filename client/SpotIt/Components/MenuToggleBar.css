@@ -17,10 +17,16 @@
     padding: 10px 12px; /* Adjusted padding */
     border-radius: 4px; /* Adjusted border radius */
     color: white;
-    background-color: #444; /* Optional: Background color */
+    background-color: #868686; /* Optional: Background color */
     border: none;
 }
-
+li{
+    list-style-type: none;
+}
+hr{
+    width: 100%;
+    margin-left: 0;
+}
 .allMenu:hover {
     border: solid white 1px;
 }
@@ -46,7 +52,13 @@
 }
 
 .menuContainer {
-    padding: 20px;
+    display: block;
+    overflow-y: scroll;
+    padding-left: 7px;
+    padding-bottom: 30px;
+    line-height: 16px;
+    text-wrap: nowrap;
+    margin-top: 50px;
 }
 
 .menuSection {
@@ -55,16 +67,25 @@
 }
 
 .heading {
-    font-weight: bold;
-    margin-bottom: 10px;
+    font-size: 18px;
+    font-weight: 700;
+    padding: 13px 20px 13px 36px;
+    width: 131px;
 }
 
 .menuContent {
+    display: flex;
+    align-items: flex-start;
     margin-bottom: 5px;
-    cursor: pointer;
-    color: #007BFF;
+    padding: 13px 20px 13px 36px;
+    font-weight: 400;
 }
 
 .menuContent:hover {
-    text-decoration: underline;
+    background-color: rgb(229, 229, 229);
+    cursor: pointer;
+}
+
+.offcanvas {
+    --bs-offcanvas-width: 350px;
 }

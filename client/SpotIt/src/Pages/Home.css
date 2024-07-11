@@ -1,0 +1,6 @@
+.main{
+    display: flex;
+    flex-direction: row;
+    justify-items: center;
+    padding: 10px;
+}

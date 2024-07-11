@@ -13,7 +13,7 @@ function MenuToggleBar() {
             <div className="offcanvas offcanvas-start" tabIndex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
                 <div className="offcanvas-header">
                     <div className='menuProfile'>
-                        <AccountCircleIcon className='userIcon'/>
+                        <AccountCircleIcon className='userIcon' />
                         <div className='username'>
                             Hello, sign in
                         </div>
@@ -24,12 +24,31 @@ function MenuToggleBar() {
                     <ul className='menuSection'>
                         <li className='heading'>Trending</li>
                         <li className='menuContent'>Best Sellers</li>
-                        <li className='menuContent'>New Releases</li>
-                        <li className='menuContent'>New Shops</li>
+                        <li className='menuContent'>New Arrivals</li>
+                        <li className='menuContent'>Top Rated</li>
+                    </ul>
+                    <ul className='menuSection'>
+                        <li className='heading'>Categories</li>
+                        <li className='menuContent'>Men</li>
+                        <li className='menuContent'>Women</li>
+                        <li className='menuContent'>Kids</li>
+                    </ul>
+                    <ul className='menuSection'>
+                        <li className='heading'>Brands</li>
+                        <li className='menuContent'>Nike</li>
+                        <li className='menuContent'>Adidas</li>
+                        <li className='menuContent'>Puma</li>
+                    </ul>
+                    <ul className='menuSection'>
+                        <li className='heading'>Sale</li>
+                        <li className='menuContent'>Clearance</li>
+                        <li className='menuContent'>Discounts</li>
+                        <li className='menuContent'>Special Offers</li>
                     </ul>
                 </div>
+
             </div>
-        </div>
+        </div >
     );
 }
 
