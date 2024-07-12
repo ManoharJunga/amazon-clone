@@ -7,20 +7,20 @@
   
   .searchInput {
     height: 40px;
-    width: 400px;
+    width: 350px;
     padding: 10px 20px;
-    border: 1px solid #ccc;
-    border-radius: 15px 0 0 15px;
+    border: 0.5px solid #F3F9FB;
     outline: none;
     font-size: 16px;
+    background-color: #F3F9FB;
   }
   
   .searchButton {
-    background-color: #6200ea;
     border: none;
     height: 40px;
-    border-radius: 0 15px 15px 0;
-    color: white;
+    border-radius: 10px 0 0 10px;
+    color: #3300FF;
+    background-color: #F3F9FB;
     padding: 10px;
     cursor: pointer;
     display: flex;
@@ -29,6 +29,21 @@
   }
   
   .searchButton:hover {
-    background-color: #3700b3;
+    background-color: #e7dcff;
   }
-  
+  .listButton{
+    border: none;
+    height: 40px;
+    border-radius: 0 10px 10px 0;
+    color: #3300FF;
+    background-color: #F3F9FB;
+    padding: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .listButton:hover {
+    background-color: #e7dcff;
+  }
