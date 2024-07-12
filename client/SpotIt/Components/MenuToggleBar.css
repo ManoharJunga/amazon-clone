@@ -89,3 +89,9 @@ hr{
 .offcanvas {
     --bs-offcanvas-width: 350px;
 }
+
+.logo img { 
+    width: 150px; 
+    height: 80px; 
+  }
+  
