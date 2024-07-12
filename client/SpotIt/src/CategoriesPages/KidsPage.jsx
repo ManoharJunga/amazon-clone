@@ -1,14 +1,11 @@
 import React from 'react'
 import Header from '../MainComponents/HeaderNavbar'
 
-
-
-function Home() {
+function KidsPage() {
   return (
     <div>
-      <Header />
-    </div>
+      <Header />KidsPage</div>
   )
 }
 
-export default Home
+export default KidsPage

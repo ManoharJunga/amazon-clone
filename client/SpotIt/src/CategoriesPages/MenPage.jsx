@@ -1,14 +1,11 @@
 import React from 'react'
 import Header from '../MainComponents/HeaderNavbar'
 
-
-
-function Home() {
+function MenPage() {
   return (
     <div>
-      <Header />
-    </div>
+      <Header />MenPage</div>
   )
 }
 
-export default Home
+export default MenPage

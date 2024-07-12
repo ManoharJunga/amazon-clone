@@ -1,14 +1,11 @@
 import React from 'react'
 import Header from '../MainComponents/HeaderNavbar'
 
-
-
-function Home() {
+function JewelleryPage() {
   return (
     <div>
-      <Header />
-    </div>
+      <Header />JewelleryPage</div>
   )
 }
 
-export default Home
+export default JewelleryPage

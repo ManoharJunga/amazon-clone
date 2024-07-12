@@ -1,14 +1,11 @@
 import React from 'react'
 import Header from '../MainComponents/HeaderNavbar'
 
-
-
-function Home() {
+function SportsPage() {
   return (
     <div>
-      <Header />
-    </div>
+      <Header />SportsPage</div>
   )
 }
 
-export default Home
+export default SportsPage

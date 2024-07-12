@@ -1,8 +1,16 @@
 import React from 'react'
+import './SignInSignUp.css'
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 
 function SignInSignUp() {
   return (
-    <div>SignInSignUp</div>
+    <div className='text'>
+        <PersonOutlineIcon className='personoutlineIcon'/>
+        <div className='signinsignuptext'>
+            SignUp/SignIn
+        </div>
+        
+    </div>
   )
 }
 

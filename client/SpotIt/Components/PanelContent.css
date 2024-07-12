@@ -1,0 +1,53 @@
+.panelContent {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-left: 150px;
+    padding-right: 150px;
+}
+
+.categories {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+.category-button {
+    background-color: #F3F9FB;
+    border-radius: 30px;
+    padding: 10px 20px;
+    height: 35px;
+    border: none;
+    cursor: pointer;
+    font-family: sans-serif;
+    font-size: 12px;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    text-decoration: none; /* Remove underline */
+}
+
+.category-arrow {
+    font-size: 10px;
+    color: #3300FF;
+}
+
+.grey {
+    border-left: 1px solid #ccc;
+    height: 100%;
+    margin: 0 10px;
+}
+
+.category-button.active {
+    color: #FFF; 
+    background-color: #3300FF; 
+}
+
+.category-button.active .category-arrow {
+    color: #FFF; /* Change arrow color when button is active */
+}
+
+.category a {
+    text-decoration: none; 
+}

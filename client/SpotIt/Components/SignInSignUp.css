@@ -1,0 +1,17 @@
+.text {
+    display: flex;
+    align-items: center;
+    margin-left: 30px;
+}
+
+.signinsignuptext {
+    margin-left: 10px;
+    font-weight: 700;
+    color: #666666;
+    cursor: pointer;
+}
+
+.personoutlineIcon{
+    color: #3300FF;
+    cursor: pointer;
+}

@@ -1,14 +1,11 @@
 import React from 'react'
 import Header from '../MainComponents/HeaderNavbar'
 
-
-
-function Home() {
+function BeautyPage() {
   return (
     <div>
-      <Header />
-    </div>
+      <Header />BeautyPage</div>
   )
 }
 
-export default Home
+export default BeautyPage
