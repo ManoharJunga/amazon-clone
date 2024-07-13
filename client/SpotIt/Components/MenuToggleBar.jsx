@@ -3,12 +3,16 @@ import './MenuToggleBar.css';
 import MenuIcon from '@mui/icons-material/Menu';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Logo from '../src/assets/Logo.svg';
+import { Link } from 'react-router-dom';
 
 function MenuToggleBar() {
     return (
         <div style={styles.navPanel}>
             <div className='logo'>
-                <img src={Logo} />
+                <Link to={"/"}>
+                    <img src={Logo} />
+                </Link>
+                
             </div>
            
             <button className="btn allMenu" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
