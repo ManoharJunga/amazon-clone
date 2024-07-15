@@ -1,14 +1,19 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import DashBoard from './pages/Dashboard'
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css'
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min';
+import Header from './components/Header';
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
-    <>
-    Hello World</>
+    <BrowserRouter>
+      <Header />
+      <Routes>
+        <Route path="/" exact={true} element={<DashBoard/>} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 
