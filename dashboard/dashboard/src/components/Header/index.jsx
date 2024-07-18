@@ -18,7 +18,9 @@ function Header() {
                     </div>
                     {/* Button Wrapper */}
                     <div className="col-6 col-md-3 d-flex justify-content-end">
-                        <Button><MenuOpenIcon /></Button>
+                        <Button className="round-button">
+                            <MenuOpenIcon />
+                        </Button>
                     </div>
                 </div>
             </div>
