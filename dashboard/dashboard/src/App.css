@@ -1,2 +1,40 @@
+.app-container {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
 
+.side-nav-bar {
+    width: 300px;
+    background-color: #f8f9fa;
+    border-right: 1px solid #e0e0e0;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+}
 
+.main-content {
+    margin-left: 300px; /* Adjust based on sidebar width */
+    width: calc(100% - 300px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+header {
+    position: fixed;
+    top: 0;
+    width: calc(100% - 300px); /* Adjust width based on sidebar width */
+    height: 60px; /* Adjust height as needed */
+    z-index: 1000;
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.content-area {
+    margin-top: 60px; /* Adjust margin-top based on header height */
+    padding: 20px;
+    flex-grow: 1;
+    overflow-y: auto;
+}

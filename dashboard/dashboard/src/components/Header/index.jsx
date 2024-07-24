@@ -1,31 +1,35 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import logo from '../../assets/Logo.svg';
-import MenuOpenIcon from '@mui/icons-material/MenuOpen';
-import Button from '@mui/material/Button'; 
-import './Header.css';
+import React from 'react'
+import './Header.css'
+import SearchIcon from '@mui/icons-material/Search';
+import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
+import MailOutlineIcon from '@mui/icons-material/MailOutline';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 function Header() {
     return (
-        <header>
-            <div className="container-fluid">
-                <div className="row align-items-center">
-                    {/* Logo Wrapper */}
-                    <div className="col-6 col-md-3">
-                        <Link to={'/'}>
-                            <img src={logo} className='logo' alt="Logo" />
-                        </Link>
-                    </div>
-                    {/* Button Wrapper */}
-                    <div className="col-6 col-md-3 d-flex justify-content-end">
-                        <Button className="round-button">
-                            <MenuOpenIcon />
-                        </Button>
-                    </div>
-                </div>
+        <div className="header-side">
+            <div className="user-info">
+                <p>Hello, Robert Fox</p>
             </div>
-        </header>
-    );
+            <div className="search-bar">
+                <input type="text" placeholder="Search your products" />
+                <button className="search-button">
+                    <SearchIcon />
+                </button>
+            </div>
+            <div className="notification-bar">
+                <span>
+                    <NotificationsNoneIcon />
+                </span>
+                <span>
+                    <MailOutlineIcon />
+                </span>
+                <span>
+                    <AccountCircleIcon className='user-avatar' alt='User Profile' />
+                </span>
+            </div>
+        </div>
+    )
 }
 
-export default Header;
+export default Header

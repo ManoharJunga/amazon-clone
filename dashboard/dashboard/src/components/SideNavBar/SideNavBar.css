@@ -1,0 +1,113 @@
+/* Main header styles */
+header {
+    width: 300px;
+    height: 100vh;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add shadow for a professional look */
+    justify-content: space-between; /* Space out elements vertically */
+    padding-bottom: 20px; /* Padding at the bottom for space */
+}
+
+/* Container for the header elements */
+.header-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Logo wrapper styles */
+.logo-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 20px 0;
+}
+
+/* Logo image styles */
+.logo {
+    width: 150px;
+}
+
+/* Menu wrapper styles */
+.menu-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0; /* Add padding for spacing */
+    gap: 10px; /* Space between buttons */
+    flex-grow: 1; /* Allow it to grow to fill available space */
+}
+
+/* Bottom menu wrapper styles */
+.bottom-menu-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 100px;
+    gap: 10px; /* Space between buttons */
+}
+
+/* Button styles */
+.button_menu {
+    width: 250px; 
+    background-color: #000; /* Black when inactive */
+    color: #000; /* Black text */
+    padding: 10px 15px; /* Add more padding for better spacing */
+    text-align: left; 
+    display: flex;
+    align-items: center; 
+    gap: 10px;
+    font-size: 16px;
+    border: none; /* Remove default button border */
+    border-radius: 5px; /* Add rounded corners */
+    cursor: pointer; /* Add cursor pointer */
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Initial icon and text color */
+.button_menu .MuiButton-startIcon,
+.button_menu span {
+    color: #000; /* Initial black color for icon and text */
+    padding-left: 10px;
+}
+
+/* Hover state styles */
+.button_menu:hover:not(.active) {
+    background-color: #62abff; /* Lighter blue on hover */
+    color: #fff; /* White text on hover */
+}
+
+/* Active state styles */
+.button_menu.active {
+    background-color: #0044ff; /* Blue when active */
+    color: #fff; /* White text when active */
+}
+
+/* Ensure icon and text remain white in active state */
+.button_menu.active .MuiButton-startIcon,
+.button_menu.active span {
+    color: #fff; /* White color for icon and text in active state */
+}
+
+/* Menu link styles */
+.menu-link {
+    text-decoration: none;
+    color: inherit; /* Inherit color from the button */
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Space between icon and text */
+}
+
+/* Ensure active button remains distinct even when hovered */
+.button_menu.active:hover {
+    background-color: #0044ff; /* Maintain blue background on hover */
+    color: #fff; /* Maintain white text on hover */
+}
+
