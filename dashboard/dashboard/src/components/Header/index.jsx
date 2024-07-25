@@ -1,5 +1,5 @@
-import React from 'react'
-import './Header.css'
+import React from 'react';
+import './Header.css';
 import SearchIcon from '@mui/icons-material/Search';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
@@ -29,7 +29,7 @@ function Header() {
                 </span>
             </div>
         </div>
-    )
+    );
 }
 
-export default Header
+export default Header;
