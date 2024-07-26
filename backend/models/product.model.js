@@ -7,7 +7,8 @@ const productSchema = new mongoose.Schema({
   category: String,
   stock: { type: Number, required: true },
   seller: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  urlSlug: { type: String, unique: true } // Added unique urlSlug field
+  urlSlug: { type: String, unique: true }, // Added unique urlSlug field
+  image: { type: String } // Added image field
 }, {
   timestamps: true
 });

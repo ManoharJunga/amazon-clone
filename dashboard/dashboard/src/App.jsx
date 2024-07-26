@@ -7,6 +7,8 @@ import SideNavBar from './components/SideNavBar';
 import Header from './components/Header';
 import DashBoard from './pages/Dashboard';
 import Customers from './pages/Customers';
+import CreateCustomer from './pages/Customers/CreateCustomer';
+import EditCustomer from './pages/Customers/EditCustomer';
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
             <Routes>
               <Route path="/" exact={true} element={<DashBoard />} />
               <Route path="/customer" exact={true} element={<Customers />} />
+              <Route path="/create" element={<CreateCustomer />} />
+              <Route path="/edit/:id" element={<EditCustomer />} />
               {/* Add more routes as needed */}
             </Routes>
           </div>

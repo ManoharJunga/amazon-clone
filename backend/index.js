@@ -1,6 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
+import cors from "cors";  // Import cors
 import routes from "./routes/routes.js";
 
 const app = express();
@@ -13,6 +14,7 @@ mongoose.connect('mongodb://localhost:27017/spotit', { useNewUrlParser: true, us
 
 // Middleware
 app.use(bodyParser.json());
+app.use(cors());  // Use cors middleware
 
 // Routes
 app.use('/api', routes);
