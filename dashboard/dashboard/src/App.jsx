@@ -9,6 +9,9 @@ import DashBoard from './pages/Dashboard';
 import Customers from './pages/Customers';
 import CreateCustomer from './pages/Customers/CreateCustomer';
 import EditCustomer from './pages/Customers/EditCustomer';
+import ProductTable from './pages/Products/ProductTable';
+import CreateProduct from './pages/Products/CreateProduct';
+import EditProduct from './pages/Products/EditProduct';
 
 function App() {
   return (
@@ -21,8 +24,11 @@ function App() {
             <Routes>
               <Route path="/" exact={true} element={<DashBoard />} />
               <Route path="/customer" exact={true} element={<Customers />} />
-              <Route path="/create" element={<CreateCustomer />} />
-              <Route path="/edit/:id" element={<EditCustomer />} />
+              <Route path="/createCustomer" element={<CreateCustomer />} />
+              <Route path="/editCustomer/:id" element={<EditCustomer />} />
+              <Route path='/products' element={<ProductTable />} />
+              <Route path="/products/create" element={<CreateProduct />} />
+              <Route path='/products/edit/:id' element={<EditProduct />} />
               {/* Add more routes as needed */}
             </Routes>
           </div>

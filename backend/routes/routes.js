@@ -10,7 +10,29 @@ import { getMails, getMail, createMail, updateMail, deleteMail } from '../contro
 import { getCalendarEvents, getCalendarEvent, createCalendarEvent, updateCalendarEvent, deleteCalendarEvent } from '../controllers/calendar.controller.js';
 import { getBrands, getBrand, createBrand, updateBrand, deleteBrand } from '../controllers/brand.controller.js';
 import { getUsers, getUser, createUser, updateUser, deleteUser } from '../controllers/user.controller.js';
+import multer from 'multer';
+import path from 'path';
 
+// Configure multer for file uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  }
+});
+
+const fileFilter = (req, file, cb) => {
+  const ext = path.extname(file.originalname).toLowerCase();
+  if (ext === '.jpg' || ext === '.jpeg' || ext === '.png') {
+    cb(null, true);
+  } else {
+    cb(new Error('Only .jpg, .jpeg, .png files are allowed'), false);
+  }
+};
+
+const upload = multer({ storage, fileFilter });
 
 const router = express.Router();
 
@@ -30,8 +52,8 @@ router.delete('/customers/:id', deleteCustomer);
 // Product Routes
 router.get('/products', getProducts);
 router.get('/products/:id', getProduct);
-router.post('/products', createProduct);
-router.put('/products/:id', updateProduct);
+router.post('/products', upload.single('image'), createProduct);
+router.put('/products/:id', upload.single('image'), updateProduct);
 router.delete('/products/:id', deleteProduct);
 
 // Payment Routes
@@ -83,6 +105,7 @@ router.post('/brands', createBrand);
 router.put('/brands/:id', updateBrand);
 router.delete('/brands/:id', deleteBrand);
 
+// User Routes
 router.get('/users', getUsers);
 router.get('/users/:id', getUser);
 router.post('/users', createUser);

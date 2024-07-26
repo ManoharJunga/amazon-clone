@@ -45,7 +45,7 @@ const Customers = () => {
         </Card>
       </Box>
 
-      <Button variant="contained" color="primary" component={Link} to="/create">
+      <Button variant="contained" color="primary" component={Link} to="/createCustomer">
         Create Customer
       </Button>
 
@@ -70,7 +70,7 @@ const Customers = () => {
                 <IconButton
                   color="primary"
                   component={Link}
-                  to={`/edit/${customer._id}`}
+                  to={`/editCustomer/${customer._id}`}
                   sx={{ marginRight: 1 }}
                 >
                   <EditIcon />
