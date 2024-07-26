@@ -5,10 +5,11 @@ import cors from "cors";
 import routes from "./routes/routes.js";
 import path from "path";
 import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 
 // Get the current file path and directory name
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname = dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 5000;

@@ -1,90 +1,59 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { TextField, Button, Box, Typography, MenuItem } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
 
-const CreateProduct = () => {
-  const navigate = useNavigate();
-  const [newProduct, setNewProduct] = useState({
-    name: '',
-    description: '',
-    price: '',
-    category: '',
-    stock: '',
-    imagePath: '',
-  });
+const CreateProduct = ({ fetchProducts }) => {
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const [price, setPrice] = useState('');
+  const [category, setCategory] = useState('');
+  const [stock, setStock] = useState('');
+  const [image, setImage] = useState(null);
+  const [error, setError] = useState('');
 
-  const handleCreate = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('description', description);
+    formData.append('price', price);
+    formData.append('category', category);
+    formData.append('stock', stock);
+    if (image) {
+      formData.append('image', image);
+    }
+
     try {
-      await axios.post('http://localhost:5000/api/products/', newProduct);
-      navigate('/products'); // Redirect to the products page after creation
+      await axios.post('http://localhost:5000/api/products', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      fetchProducts();
+      setName('');
+      setDescription('');
+      setPrice('');
+      setCategory('');
+      setStock('');
+      setImage(null);
+      setError('');
     } catch (error) {
-      console.error('Error creating product:', error);
+      setError('Error creating product');
+      console.error('Error creating product', error);
     }
   };
 
   return (
-    <Box sx={{ backgroundColor: 'white', padding: '20px' }}>
-      <Typography variant="h4" component="h1">Create Product</Typography>
-      
-      <TextField
-        fullWidth
-        variant="outlined"
-        label="Name"
-        placeholder="Enter product name"
-        value={newProduct.name}
-        onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
-        margin="normal"
-      />
-      <TextField
-        fullWidth
-        variant="outlined"
-        label="Description"
-        placeholder="Enter product description"
-        value={newProduct.description}
-        onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
-        margin="normal"
-      />
-      <TextField
-        fullWidth
-        variant="outlined"
-        label="Price"
-        placeholder="Enter product price"
-        value={newProduct.price}
-        onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
-        margin="normal"
-      />
-      <TextField
-        fullWidth
-        variant="outlined"
-        label="Category"
-        placeholder="Enter product category"
-        value={newProduct.category}
-        onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
-        margin="normal"
-      />
-      <TextField
-        fullWidth
-        variant="outlined"
-        label="Stock"
-        placeholder="Enter product stock"
-        value={newProduct.stock}
-        onChange={(e) => setNewProduct({ ...newProduct, stock: e.target.value })}
-        margin="normal"
-      />
-      <TextField
-        fullWidth
-        variant="outlined"
-        label="Image Path"
-        placeholder="Enter image path"
-        value={newProduct.imagePath}
-        onChange={(e) => setNewProduct({ ...newProduct, imagePath: e.target.value })}
-        margin="normal"
-      />
-      <Button variant="contained" color="primary" onClick={handleCreate}>
-        Create Product
-      </Button>
-    </Box>
+    <form onSubmit={handleSubmit}>
+      <h2>Create Product</h2>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+      <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" required />
+      <input type="text" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Description" required />
+      <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="Price" required />
+      <input type="text" value={category} onChange={(e) => setCategory(e.target.value)} placeholder="Category" required />
+      <input type="number" value={stock} onChange={(e) => setStock(e.target.value)} placeholder="Stock" required />
+      <input type="file" onChange={(e) => setImage(e.target.files[0])} accept="image/*" />
+      <button type="submit">Create</button>
+    </form>
   );
 };
 

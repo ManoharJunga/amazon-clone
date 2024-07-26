@@ -1,34 +1,57 @@
 import express from 'express';
-import { getDashboard, createDashboard, updateDashboard, deleteDashboard } from '../controllers/dashboard.controller.js';
-import { getCustomers, getCustomer, createCustomer, updateCustomer, deleteCustomer } from '../controllers/customer.controller.js';
-import { getProducts, getProduct, createProduct, updateProduct, deleteProduct } from '../controllers/product.controller.js';
-import { getPayments, getPayment, createPayment, updatePayment, deletePayment } from '../controllers/payment.controller.js';
-import { getOrders, getOrder, createOrder, updateOrder, deleteOrder } from '../controllers/order.controller.js';
-import { getOrderItems, getOrderItem, createOrderItem, updateOrderItem, deleteOrderItem } from '../controllers/order_item.controller.js';
-import { getChats, getChat, createChat, updateChat, deleteChat } from '../controllers/chat.controller.js';
-import { getMails, getMail, createMail, updateMail, deleteMail } from '../controllers/mail.controller.js';
-import { getCalendarEvents, getCalendarEvent, createCalendarEvent, updateCalendarEvent, deleteCalendarEvent } from '../controllers/calendar.controller.js';
-import { getBrands, getBrand, createBrand, updateBrand, deleteBrand } from '../controllers/brand.controller.js';
-import { getUsers, getUser, createUser, updateUser, deleteUser } from '../controllers/user.controller.js';
 import multer from 'multer';
 import path from 'path';
+// Import controllers
+import {
+  getDashboard, createDashboard, updateDashboard, deleteDashboard
+} from '../controllers/dashboard.controller.js';
+import {
+  getCustomers, getCustomer, createCustomer, updateCustomer, deleteCustomer
+} from '../controllers/customer.controller.js';
+import { 
+  getProducts, getProduct, createProduct, updateProduct, deleteProduct 
+} from '../controllers/product.controller.js';
+import {
+  getPayments, getPayment, createPayment, updatePayment, deletePayment
+} from '../controllers/payment.controller.js';
+import {
+  getOrders, getOrder, createOrder, updateOrder, deleteOrder
+} from '../controllers/order.controller.js';
+import {
+  getOrderItems, getOrderItem, createOrderItem, updateOrderItem, deleteOrderItem
+} from '../controllers/order_item.controller.js';
+import {
+  getChats, getChat, createChat, updateChat, deleteChat
+} from '../controllers/chat.controller.js';
+import {
+  getMails, getMail, createMail, updateMail, deleteMail
+} from '../controllers/mail.controller.js';
+import {
+  getCalendarEvents, getCalendarEvent, createCalendarEvent, updateCalendarEvent, deleteCalendarEvent
+} from '../controllers/calendar.controller.js';
+import {
+  getBrands, getBrand, createBrand, updateBrand, deleteBrand
+} from '../controllers/brand.controller.js';
+import {
+  getUsers, getUser, createUser, updateUser, deleteUser
+} from '../controllers/user.controller.js';
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/');
+    cb(null, 'uploads/'); // Define upload folder
   },
   filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
+    cb(null, `${Date.now()}-${file.originalname}`); // Define filename
   }
 });
 
 const fileFilter = (req, file, cb) => {
   const ext = path.extname(file.originalname).toLowerCase();
   if (ext === '.jpg' || ext === '.jpeg' || ext === '.png') {
-    cb(null, true);
+    cb(null, true); // Accept file
   } else {
-    cb(new Error('Only .jpg, .jpeg, .png files are allowed'), false);
+    cb(new Error('Only .jpg, .jpeg, .png files are allowed'), false); // Reject file
   }
 };
 
