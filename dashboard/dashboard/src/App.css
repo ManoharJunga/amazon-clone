@@ -33,7 +33,6 @@ header {
 }
 
 .content-area {
-    margin-top: 60px; /* Adjust margin-top based on header height */
     padding: 20px;
     flex-grow: 1;
     overflow-y: auto;
