@@ -1,6 +1,7 @@
 import express from 'express';
 import multer from 'multer';
 import path from 'path';
+
 // Import controllers
 import {
   getDashboard, createDashboard, updateDashboard, deleteDashboard
@@ -8,8 +9,8 @@ import {
 import {
   getCustomers, getCustomer, createCustomer, updateCustomer, deleteCustomer
 } from '../controllers/customer.controller.js';
-import { 
-  getProducts, getProduct, createProduct, updateProduct, deleteProduct 
+import {
+  getProducts, getProduct, createProduct, updateProduct, deleteProduct
 } from '../controllers/product.controller.js';
 import {
   getPayments, getPayment, createPayment, updatePayment, deletePayment
@@ -39,19 +40,19 @@ import {
 // Configure multer for file uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/'); // Define upload folder
+    cb(null, 'uploads/');
   },
   filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`); // Define filename
+    cb(null, `${Date.now()}-${file.originalname}`);
   }
 });
 
 const fileFilter = (req, file, cb) => {
   const ext = path.extname(file.originalname).toLowerCase();
   if (ext === '.jpg' || ext === '.jpeg' || ext === '.png') {
-    cb(null, true); // Accept file
+    cb(null, true);
   } else {
-    cb(new Error('Only .jpg, .jpeg, .png files are allowed'), false); // Reject file
+    cb(new Error('Only .jpg, .jpeg, .png files are allowed'), false);
   }
 };
 

@@ -10,6 +10,8 @@ const ProductForm = ({ selectedProduct, fetchProducts }) => {
     stock: '',
     image: null
   });
+  const [isEditing, setIsEditing] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (selectedProduct) {
@@ -19,38 +21,10 @@ const ProductForm = ({ selectedProduct, fetchProducts }) => {
         price: selectedProduct.price,
         category: selectedProduct.category,
         stock: selectedProduct.stock,
-        image: null // Reset image
+        image: null
       });
-    }
-  }, [selectedProduct]);
-
-  const handleChange = (e) => {
-    if (e.target.name === 'image') {
-      setFormData({ ...formData, image: e.target.files[0] });
+      setIsEditing(true);
     } else {
-      setFormData({ ...formData, [e.target.name]: e.target.value });
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const form = new FormData();
-    form.append('name', formData.name);
-    form.append('description', formData.description);
-    form.append('price', formData.price);
-    form.append('category', formData.category);
-    form.append('stock', formData.stock);
-    if (formData.image) {
-      form.append('image', formData.image);
-    }
-
-    try {
-      if (selectedProduct) {
-        await axios.put(`http://localhost:5000/api/products/${selectedProduct._id}`, form);
-      } else {
-        await axios.post('http://localhost:5000/api/products', form);
-      }
-      fetchProducts();
       setFormData({
         name: '',
         description: '',
@@ -59,59 +33,97 @@ const ProductForm = ({ selectedProduct, fetchProducts }) => {
         stock: '',
         image: null
       });
+      setIsEditing(false);
+    }
+  }, [selectedProduct]);
+
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
+    if (name === 'image') {
+      setFormData({ ...formData, [name]: files[0] });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const form = new FormData();
+    for (const key in formData) {
+      form.append(key, formData[key]);
+    }
+
+    try {
+      if (isEditing) {
+        await axios.put(`http://localhost:5000/api/products/${selectedProduct._id}`, form, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+      } else {
+        await axios.post('http://localhost:5000/api/products', form, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+      }
+      fetchProducts();
     } catch (error) {
       console.error('Error saving product', error);
+      setError('Error saving product');
     }
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <h2>{selectedProduct ? 'Edit Product' : 'Add Product'}</h2>
+      <h2>{isEditing ? 'Edit Product' : 'Add Product'}</h2>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
       <input
         type="text"
         name="name"
+        placeholder="Name"
         value={formData.name}
         onChange={handleChange}
-        placeholder="Name"
         required
       />
       <input
         type="text"
         name="description"
+        placeholder="Description"
         value={formData.description}
         onChange={handleChange}
-        placeholder="Description"
+        required
       />
       <input
         type="number"
         name="price"
+        placeholder="Price"
         value={formData.price}
         onChange={handleChange}
-        placeholder="Price"
         required
       />
       <input
         type="text"
         name="category"
+        placeholder="Category"
         value={formData.category}
         onChange={handleChange}
-        placeholder="Category"
+        required
       />
       <input
         type="number"
         name="stock"
+        placeholder="Stock"
         value={formData.stock}
         onChange={handleChange}
-        placeholder="Stock"
         required
       />
       <input
         type="file"
         name="image"
         onChange={handleChange}
-        accept=".jpg,.jpeg,.png"
       />
-      <button type="submit">{selectedProduct ? 'Update' : 'Add'} Product</button>
+      <button type="submit">{isEditing ? 'Update Product' : 'Add Product'}</button>
     </form>
   );
 };
