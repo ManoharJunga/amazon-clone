@@ -1,59 +1,157 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { TextField, Button, Box, Typography, IconButton, Grid, Paper, Avatar } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import PhotoCamera from '@mui/icons-material/PhotoCamera';
+import AddBoxIcon from '@mui/icons-material/AddBox';
 
-const CreateProduct = ({ fetchProducts }) => {
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [price, setPrice] = useState('');
-  const [category, setCategory] = useState('');
-  const [stock, setStock] = useState('');
-  const [image, setImage] = useState(null);
-  const [error, setError] = useState('');
+const CreateProduct = () => {
+  const navigate = useNavigate();
+  const [newProduct, setNewProduct] = useState({
+    name: '',
+    description: '',
+    price: '',
+    category: '',
+    stock: '',
+  });
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [preview, setPreview] = useState(null);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedFile(file);
+      const previewUrl = URL.createObjectURL(file);
+      setPreview(previewUrl);
+    }
+  };
+
+  const handleCreate = async () => {
     const formData = new FormData();
-    formData.append('name', name);
-    formData.append('description', description);
-    formData.append('price', price);
-    formData.append('category', category);
-    formData.append('stock', stock);
-    if (image) {
-      formData.append('image', image);
+    formData.append('name', newProduct.name);
+    formData.append('description', newProduct.description);
+    formData.append('price', newProduct.price);
+    formData.append('category', newProduct.category);
+    formData.append('stock', newProduct.stock);
+    if (selectedFile) {
+      formData.append('image', selectedFile);
     }
 
     try {
-      await axios.post('http://localhost:5000/api/products', formData, {
+      await axios.post('http://localhost:5000/api/products/', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-      fetchProducts();
-      setName('');
-      setDescription('');
-      setPrice('');
-      setCategory('');
-      setStock('');
-      setImage(null);
-      setError('');
+      navigate('/products'); // Redirect to the products page after creation
     } catch (error) {
-      setError('Error creating product');
-      console.error('Error creating product', error);
+      console.error('Error creating product:', error);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Create Product</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" required />
-      <input type="text" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Description" required />
-      <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="Price" required />
-      <input type="text" value={category} onChange={(e) => setCategory(e.target.value)} placeholder="Category" required />
-      <input type="number" value={stock} onChange={(e) => setStock(e.target.value)} placeholder="Stock" required />
-      <input type="file" onChange={(e) => setImage(e.target.files[0])} accept="image/*" />
-      <button type="submit">Create</button>
-    </form>
+    <Paper elevation={3} sx={{ padding: 4, maxWidth: 600, margin: 'auto', mt: 4 }}>
+      <Grid container direction="column" alignItems="center" spacing={2}>
+        <Grid item>
+          <Avatar sx={{ bgcolor: 'primary.main', mb: 1 }}>
+            <AddBoxIcon />
+          </Avatar>
+          <Typography variant="h4" component="h1">Create Product</Typography>
+        </Grid>
+
+        <Grid item container spacing={2}>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              variant="outlined"
+              label="Name"
+              placeholder="Enter product name"
+              value={newProduct.name}
+              onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              variant="outlined"
+              label="Description"
+              placeholder="Enter product description"
+              value={newProduct.description}
+              onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
+              multiline
+              rows={4}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              variant="outlined"
+              label="Price"
+              placeholder="Enter product price"
+              value={newProduct.price}
+              onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              variant="outlined"
+              label="Category"
+              placeholder="Enter product category"
+              value={newProduct.category}
+              onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              variant="outlined"
+              label="Stock"
+              placeholder="Enter product stock"
+              value={newProduct.stock}
+              onChange={(e) => setNewProduct({ ...newProduct, stock: e.target.value })}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <input
+              accept="image/*"
+              style={{ display: 'none' }}
+              id="raised-button-file"
+              type="file"
+              onChange={handleFileChange}
+            />
+            <label htmlFor="raised-button-file">
+              <IconButton color="primary" aria-label="upload picture" component="span">
+                <PhotoCamera />
+              </IconButton>
+              <Button variant="contained" component="span">
+                Upload Image
+              </Button>
+            </label>
+          </Grid>
+          {preview && (
+            <Grid item xs={12}>
+              <Typography variant="body1">Image Preview:</Typography>
+              <Box sx={{ textAlign: 'center' }}>
+                <img src={preview} alt="Selected" style={{ maxHeight: '200px', maxWidth: '100%' }} />
+              </Box>
+            </Grid>
+          )}
+        </Grid>
+
+        <Grid item>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleCreate}
+            sx={{ marginTop: 2 }}
+            fullWidth
+          >
+            Create Product
+          </Button>
+        </Grid>
+      </Grid>
+    </Paper>
   );
 };
 
