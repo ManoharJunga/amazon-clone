@@ -28,20 +28,33 @@ const Orders = () => {
     fetchOrders();
   }, []);
 
+  const getHeaderBgColor = (status) => {
+    switch (status) {
+      case 'Pending':
+        return '#ffc107'; // Bootstrap warning color
+      case 'Shipped':
+        return '#17a2b8'; // Bootstrap info color
+      case 'Delivered':
+        return '#28a745'; // Bootstrap success color
+      default:
+        return '#f8f9fa'; // Bootstrap light color
+    }
+  };
+
   const filteredOrders = statusFilter === 'All'
     ? orders
     : orders.filter(order => order.status === statusFilter);
 
   return (
     <div className="container mt-4">
-      <h1 className="mb-4">Order Dashboard</h1>
+      <h1 className="mb-4 text-center">Order Dashboard</h1>
 
-      {loading && <p>Loading...</p>}
+      {loading && <p className="text-center">Loading...</p>}
       {error && <div className="alert alert-danger" role="alert">{error}</div>}
 
       {!loading && !error && (
         <>
-          <div className="mb-3">
+          <div className="mb-4">
             <label htmlFor="statusFilter" className="form-label">Filter by Status:</label>
             <select
               id="statusFilter"
@@ -55,28 +68,38 @@ const Orders = () => {
               <option value="Delivered">Delivered</option>
             </select>
           </div>
-          <ul className="list-group">
+          <div className="row">
             {filteredOrders.length > 0 ? (
               filteredOrders.map(order => (
-                <li key={order._id} className="list-group-item border rounded mb-3">
-                  <h5>Order Number: {order.orderNumber}</h5>
-                  <p>Status: {order.status}</p>
-                  <p>Date: {new Date(order.date).toLocaleDateString()}</p>
-                  <p>Total Amount: ${order.total_amount.toFixed(2)}</p>
-                  <p>Shipping Address: {order.shipping_address}</p>
-                  <ul className="list-group">
-                    {order.products.map((product, index) => (
-                      <li key={index} className="list-group-item">
-                        Product ID: {product.product_id}, Quantity: {product.quantity}
-                      </li>
-                    ))}
-                  </ul>
-                </li>
+                <div key={order._id} className="col-md-6 col-lg-4 mb-4">
+                  <div className="card border-0 shadow-sm">
+                    <div
+                      className="card-header text-white"
+                      style={{ backgroundColor: getHeaderBgColor(order.status) }}
+                    >
+                      <h5 className="mb-0">Order Number: {order.orderNumber}</h5>
+                    </div>
+                    <div className="card-body">
+                      <p className="card-text"><strong>Status:</strong> {order.status}</p>
+                      <p className="card-text"><strong>Date:</strong> {new Date(order.date).toLocaleDateString()}</p>
+                      <p className="card-text"><strong>Total Amount:</strong> ${order.total_amount.toFixed(2)}</p>
+                      <p className="card-text"><strong>Shipping Address:</strong> {order.shipping_address}</p>
+                      <h6 className="mt-3">Products:</h6>
+                      <ul className="list-group">
+                        {order.products.map((product, index) => (
+                          <li key={index} className="list-group-item">
+                            Product ID: {product.product_id}, Quantity: {product.quantity}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
               ))
             ) : (
-              <p>No orders available.</p>
+              <p className="text-center">No orders available.</p>
             )}
-          </ul>
+          </div>
         </>
       )}
     </div>
