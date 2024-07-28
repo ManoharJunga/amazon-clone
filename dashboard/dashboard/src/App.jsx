@@ -12,6 +12,7 @@ import EditCustomer from './pages/Customers/EditCustomer';
 import ProductTable from './pages/Products/ProductTable';
 import CreateProduct from './pages/Products/CreateProduct';
 import EditProduct from './pages/Products/EditProduct';
+import Calendar from './pages/Calendar';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
               <Route path='/products' element={<ProductTable />} />
               <Route path="/products/create" element={<CreateProduct />} />
               <Route path='/products/edit/:id' element={<EditProduct />} />
+              <Route path='/calendar' element={<Calendar />} />
               {/* Add more routes as needed */}
             </Routes>
           </div>

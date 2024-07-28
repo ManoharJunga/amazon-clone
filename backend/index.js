@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import cors from "cors";
+import authRoutes from "./routes/auth.js"; // Update path if necessary
 import routes from "./routes/routes.js";
 import path from "path";
 import { fileURLToPath } from 'url';
@@ -22,6 +23,7 @@ app.use(cors());
 // Serve static files from the 'uploads' directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+app.use('/auth', authRoutes); // Use auth routes
 app.use('/api', routes);
 
 app.listen(PORT, () => {

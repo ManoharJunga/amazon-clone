@@ -31,7 +31,7 @@ function SideNavBar() {
         { path: '/orders', label: 'Orders', icon: <ReceiptIcon /> },
         { path: '/chat', label: 'Chat', icon: <ChatIcon /> },
         { path: '/mail', label: 'Mail', icon: <MailIcon /> },
-        { path: '/calendrer', label: 'Calendrer', icon: <CalendarTodayIcon /> },
+        { path: '/calendar', label: 'Calendar', icon: <CalendarTodayIcon /> },
         { path: '/brands', label: 'Brands', icon: <BrandingWatermarkIcon /> }
     ];
 
