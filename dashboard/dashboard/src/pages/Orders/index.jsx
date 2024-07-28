@@ -6,6 +6,8 @@ const Orders = () => {
   const [statusFilter, setStatusFilter] = useState('All');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -28,16 +30,16 @@ const Orders = () => {
     fetchOrders();
   }, []);
 
-  const getHeaderBgColor = (status) => {
+  const getStatusClass = (status) => {
     switch (status) {
       case 'Pending':
-        return '#ffc107'; // Bootstrap warning color
+        return 'text-warning';
       case 'Shipped':
-        return '#17a2b8'; // Bootstrap info color
+        return 'text-info';
       case 'Delivered':
-        return '#28a745'; // Bootstrap success color
+        return 'text-success';
       default:
-        return '#f8f9fa'; // Bootstrap light color
+        return 'text-muted';
     }
   };
 
@@ -45,12 +47,17 @@ const Orders = () => {
     ? orders
     : orders.filter(order => order.status === statusFilter);
 
+  // Pagination logic
+  const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedOrders = filteredOrders.slice(startIndex, startIndex + itemsPerPage);
+
   return (
     <div className="container mt-4">
       <h1 className="mb-4 text-center">Order Dashboard</h1>
 
       {loading && <p className="text-center">Loading...</p>}
-      {error && <div className="alert alert-danger" role="alert">{error}</div>}
+      {error && <div className="alert alert-danger text-center" role="alert">{error}</div>}
 
       {!loading && !error && (
         <>
@@ -68,37 +75,79 @@ const Orders = () => {
               <option value="Delivered">Delivered</option>
             </select>
           </div>
-          <div className="row">
-            {filteredOrders.length > 0 ? (
-              filteredOrders.map(order => (
-                <div key={order._id} className="col-md-6 col-lg-4 mb-4">
-                  <div className="card border-0 shadow-sm">
-                    <div
-                      className="card-header text-white"
-                      style={{ backgroundColor: getHeaderBgColor(order.status) }}
+          <div className="table-responsive">
+            <table className="table table-striped">
+              <thead>
+                <tr>
+                  <th>Order Number</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                  <th>Total Amount</th>
+                  <th>Shipping Address</th>
+                  <th>Products</th>
+                </tr>
+              </thead>
+              <tbody>
+                {paginatedOrders.length > 0 ? (
+                  paginatedOrders.map(order => (
+                    <tr key={order._id}>
+                      <td>{order.orderNumber}</td>
+                      <td className={getStatusClass(order.status)}>{order.status}</td>
+                      <td>{new Date(order.date).toLocaleDateString()}</td>
+                      <td>${order.total_amount.toFixed(2)}</td>
+                      <td>{order.shipping_address}</td>
+                      <td>
+                        <ul className="list-unstyled">
+                          {order.products.map((product, index) => (
+                            <li key={index}>
+                              Product ID: {product.product_id}, Quantity: {product.quantity}
+                            </li>
+                          ))}
+                        </ul>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="6" className="text-center">No orders available.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+          <div className="d-flex justify-content-center mt-4">
+            <nav aria-label="Page navigation">
+              <ul className="pagination">
+                <li className="page-item">
+                  <button
+                    className="page-link"
+                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                  >
+                    Previous
+                  </button>
+                </li>
+                {[...Array(totalPages).keys()].map(number => (
+                  <li key={number} className={`page-item ${number + 1 === currentPage ? 'active' : ''}`}>
+                    <button
+                      className="page-link"
+                      onClick={() => setCurrentPage(number + 1)}
                     >
-                      <h5 className="mb-0">Order Number: {order.orderNumber}</h5>
-                    </div>
-                    <div className="card-body">
-                      <p className="card-text"><strong>Status:</strong> {order.status}</p>
-                      <p className="card-text"><strong>Date:</strong> {new Date(order.date).toLocaleDateString()}</p>
-                      <p className="card-text"><strong>Total Amount:</strong> ${order.total_amount.toFixed(2)}</p>
-                      <p className="card-text"><strong>Shipping Address:</strong> {order.shipping_address}</p>
-                      <h6 className="mt-3">Products:</h6>
-                      <ul className="list-group">
-                        {order.products.map((product, index) => (
-                          <li key={index} className="list-group-item">
-                            Product ID: {product.product_id}, Quantity: {product.quantity}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <p className="text-center">No orders available.</p>
-            )}
+                      {number + 1}
+                    </button>
+                  </li>
+                ))}
+                <li className="page-item">
+                  <button
+                    className="page-link"
+                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                    disabled={currentPage === totalPages}
+                  >
+                    Next
+                  </button>
+                </li>
+              </ul>
+            </nav>
           </div>
         </>
       )}

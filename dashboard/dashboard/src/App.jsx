@@ -14,6 +14,7 @@ import CreateProduct from './pages/Products/CreateProduct';
 import EditProduct from './pages/Products/EditProduct';
 import Calendar from './pages/Calendar';
 import Orders from './pages/Orders';
+import Payments from './pages/Payments';
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
               <Route path='/products/edit/:id' element={<EditProduct />} />
               <Route path='/calendar' element={<Calendar />} />
               <Route path="/orders" element={<Orders />} />
+              <Route path="/payments" element={<Payments />} />
               {/* Add more routes as needed */}
             </Routes>
           </div>
