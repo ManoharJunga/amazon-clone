@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import RevenueChart from '../../components/RevenueChart';
 import { Card, Container, Row, Col } from 'react-bootstrap';
 import { ShoppingCart, Payment, Group } from '@mui/icons-material';
+import { Link } from 'react-router-dom';
 
 function DashBoard() {
   const [orders, setOrders] = useState([]);
@@ -59,43 +60,49 @@ function DashBoard() {
     <Container className="mt-4">
       <Row>
         <Col md={4} className="mb-4">
-          <Card>
-            <Card.Body>
-              <div className="d-flex align-items-center">
-                <ShoppingCart sx={{ color: '#0044ff', fontSize: 30, marginRight: 2 }} />
-                <div>
-                  <Card.Title>Total Orders</Card.Title>
-                  <Card.Text>{orders.length}</Card.Text>
+          <Link to="/orders" style={{ textDecoration: 'none' }}>
+            <Card>
+              <Card.Body>
+                <div className="d-flex align-items-center">
+                  <ShoppingCart sx={{ color: '#0044ff', fontSize: 30, marginRight: 2 }} />
+                  <div>
+                    <Card.Title>Total Orders</Card.Title>
+                    <Card.Text>{orders.length}</Card.Text>
+                  </div>
                 </div>
-              </div>
-            </Card.Body>
-          </Card>
+              </Card.Body>
+            </Card>
+          </Link>
         </Col>
         <Col md={4} className="mb-4">
-          <Card>
-            <Card.Body>
-              <div className="d-flex align-items-center">
-                <Payment sx={{ color: '#0044ff', fontSize: 30, marginRight: 2 }} />
-                <div>
-                  <Card.Title>Total Payments</Card.Title>
-                  <Card.Text>{payments.length}</Card.Text>
+          <Link to="/payments" style={{ textDecoration: 'none' }}>
+            <Card>
+              <Card.Body>
+                <div className="d-flex align-items-center">
+                  <Payment sx={{ color: '#0044ff', fontSize: 30, marginRight: 2 }} />
+                  <div>
+                    <Card.Title>Total Payments</Card.Title>
+                    <Card.Text>{payments.length}</Card.Text>
+                  </div>
                 </div>
-              </div>
-            </Card.Body>
-          </Card>
+              </Card.Body>
+            </Card>
+          </Link>
         </Col>
         <Col md={4} className="mb-4">
-          <Card>
-            <Card.Body>
-              <div className="d-flex align-items-center">
-                <Group sx={{ color: '#0044ff', fontSize: 30, marginRight: 2 }} />
-                <div>
-                  <Card.Title>Total Customers</Card.Title>
-                  <Card.Text>{customers.length}</Card.Text>
+          <Link to="/customer" style={{ textDecoration: 'none' }}>
+            <Card>
+              <Card.Body>
+                <div className="d-flex align-items-center">
+                  <Group sx={{ color: '#0044ff', fontSize: 30, marginRight: 2 }} />
+                  <div>
+                    <Card.Title>Total Customers</Card.Title>
+                    <Card.Text>{customers.length}</Card.Text>
+                  </div>
                 </div>
-              </div>
-            </Card.Body>
-          </Card>
+              </Card.Body>
+            </Card>
+          </Link>
         </Col>
       </Row>
       <RevenueChart />

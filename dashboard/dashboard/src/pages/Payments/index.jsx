@@ -10,7 +10,7 @@ const Payments = () => {
   const [sortCriteria, setSortCriteria] = useState('date');
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedPayment, setSelectedPayment] = useState(null);
-  const itemsPerPage = 5;
+  const itemsPerPage = 10;
 
   useEffect(() => {
     const fetchPayments = async () => {

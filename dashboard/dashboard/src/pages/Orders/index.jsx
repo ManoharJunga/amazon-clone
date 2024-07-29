@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { Modal, Button } from 'react-bootstrap';
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -7,6 +8,8 @@ const Orders = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [sortConfig, setSortConfig] = useState({ key: '', direction: 'asc' });
+  const [selectedOrder, setSelectedOrder] = useState(null);
   const itemsPerPage = 10;
 
   useEffect(() => {
@@ -43,9 +46,27 @@ const Orders = () => {
     }
   };
 
+  const handleSort = (key) => {
+    let direction = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const sortedOrders = [...orders].sort((a, b) => {
+    if (a[sortConfig.key] < b[sortConfig.key]) {
+      return sortConfig.direction === 'asc' ? -1 : 1;
+    }
+    if (a[sortConfig.key] > b[sortConfig.key]) {
+      return sortConfig.direction === 'asc' ? 1 : -1;
+    }
+    return 0;
+  });
+
   const filteredOrders = statusFilter === 'All'
-    ? orders
-    : orders.filter(order => order.status === statusFilter);
+    ? sortedOrders
+    : sortedOrders.filter(order => order.status === statusFilter);
 
   // Pagination logic
   const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
@@ -79,12 +100,22 @@ const Orders = () => {
             <table className="table table-striped">
               <thead>
                 <tr>
-                  <th>Order Number</th>
-                  <th>Status</th>
-                  <th>Date</th>
-                  <th>Total Amount</th>
-                  <th>Shipping Address</th>
-                  <th>Products</th>
+                  <th onClick={() => handleSort('orderNumber')}>
+                    Order Number {sortConfig.key === 'orderNumber' && (sortConfig.direction === 'asc' ? '▲' : '▼')}
+                  </th>
+                  <th onClick={() => handleSort('status')}>
+                    Status {sortConfig.key === 'status' && (sortConfig.direction === 'asc' ? '▲' : '▼')}
+                  </th>
+                  <th onClick={() => handleSort('date')}>
+                    Date {sortConfig.key === 'date' && (sortConfig.direction === 'asc' ? '▲' : '▼')}
+                  </th>
+                  <th onClick={() => handleSort('total_amount')}>
+                    Total Amount {sortConfig.key === 'total_amount' && (sortConfig.direction === 'asc' ? '▲' : '▼')}
+                  </th>
+                  <th onClick={() => handleSort('shipping_address')}>
+                    Shipping Address {sortConfig.key === 'shipping_address' && (sortConfig.direction === 'asc' ? '▲' : '▼')}
+                  </th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -97,13 +128,7 @@ const Orders = () => {
                       <td>${order.total_amount.toFixed(2)}</td>
                       <td>{order.shipping_address}</td>
                       <td>
-                        <ul className="list-unstyled">
-                          {order.products.map((product, index) => (
-                            <li key={index}>
-                              Product ID: {product.product_id}, Quantity: {product.quantity}
-                            </li>
-                          ))}
-                        </ul>
+                        <Button onClick={() => setSelectedOrder(order)}>View Details</Button>
                       </td>
                     </tr>
                   ))
@@ -151,6 +176,35 @@ const Orders = () => {
           </div>
         </>
       )}
+
+      <Modal show={!!selectedOrder} onHide={() => setSelectedOrder(null)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Order Details</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {selectedOrder && (
+            <>
+              <h5>Order Number: {selectedOrder.orderNumber}</h5>
+              <p><strong>Status:</strong> {selectedOrder.status}</p>
+              <p><strong>Date:</strong> {new Date(selectedOrder.date).toLocaleDateString()}</p>
+              <p><strong>Total Amount:</strong> ${selectedOrder.total_amount.toFixed(2)}</p>
+              <p><strong>Shipping Address:</strong> {selectedOrder.shipping_address}</p>
+              <h6>Products:</h6>
+              <ul>
+                {selectedOrder.products.map((product, index) => (
+                  <li key={index}>
+                    <div>Product ID: {product.product_id}</div>
+                    <div>Quantity: {product.quantity}</div>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setSelectedOrder(null)}>Close</Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };
