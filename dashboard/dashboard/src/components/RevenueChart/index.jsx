@@ -1,99 +1,91 @@
 import React, { useState, useEffect } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import './RevenueChart.css';
+import { Line } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 
-function RevenueChart() {
-  const [revenueData, setRevenueData] = useState([]);
-  const [timePeriod, setTimePeriod] = useState('daily'); // Initial state
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+
+const RevenueChart = ({ filter }) => {
+  const [chartData, setChartData] = useState({ labels: [], datasets: [] });
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchRevenueData(timePeriod); // Fetch data from mock data
-  }, [timePeriod]);
+    const fetchChartData = async () => {
+      try {
+        const response = await fetch(`http://localhost:5000/api/revenues?filter=${filter}`);
 
-  const fetchRevenueData = (period) => {
-    let data = [];
-    switch(period) {
-      case 'daily':
-        data = [
-          { date: '2024-07-01', revenue: 400 },
-          { date: '2024-07-02', revenue: 300 },
-          { date: '2024-07-03', revenue: 500 },
-          { date: '2024-07-04', revenue: 200 },
-          { date: '2024-07-05', revenue: 600 },
-          { date: '2024-07-06', revenue: 700 },
-          { date: '2024-07-07', revenue: 800 },
-        ];
-        break;
-      case 'weekly':
-        data = [
-          { date: 'Week 1', revenue: 1500 },
-          { date: 'Week 2', revenue: 2000 },
-          { date: 'Week 3', revenue: 2500 },
-          { date: 'Week 4', revenue: 3000 },
-        ];
-        break;
-      case 'monthly':
-        data = [
-          { date: 'January', revenue: 5000 },
-          { date: 'February', revenue: 6000 },
-          { date: 'March', revenue: 7000 },
-          { date: 'April', revenue: 8000 },
-          { date: 'May', revenue: 9000 },
-          { date: 'June', revenue: 10000 },
-          { date: 'July', revenue: 11000 },
-        ];
-        break;
-      case 'yearly':
-        data = [
-          { date: '2020', revenue: 50000 },
-          { date: '2021', revenue: 60000 },
-          { date: '2022', revenue: 70000 },
-          { date: '2023', revenue: 80000 },
-          { date: '2024', revenue: 90000 },
-        ];
-        break;
-      default:
-        data = [];
-    }
-    setRevenueData(data);
-  };
+        if (!response.ok) {
+          throw new Error('Error fetching chart data');
+        }
 
-  const handleTimePeriodChange = (event) => {
-    setTimePeriod(event.target.value);
-  };
+        const data = await response.json();
+
+        if (!Array.isArray(data)) {
+          throw new Error('Data format error');
+        }
+
+        // Map the data correctly to the chart's format
+        const labels = data.length > 0 ? data.map(item => new Date(item.period_end).toLocaleDateString()) : ['No Data'];
+        const values = data.length > 0 ? data.map(item => item.total_revenue) : [0];
+
+        setChartData({
+          labels: labels,
+          datasets: [
+            {
+              label: 'Revenue',
+              data: values,
+              borderColor: '#0044ff',
+              backgroundColor: 'rgba(0, 68, 255, 0.2)',
+              borderWidth: 2,
+            },
+          ],
+        });
+      } catch (error) {
+        console.error('Error fetching chart data:', error);
+        setError('Failed to load chart data');
+      }
+    };
+
+    fetchChartData();
+  }, [filter]);
+
+  if (error) {
+    return <div className="alert alert-danger text-center" role="alert">{error}</div>;
+  }
 
   return (
-    <div className="revenue-chart-container">
-      {/* Time Period Selection */}
-      <div className="dropdown-container">
-        <select value={timePeriod} onChange={handleTimePeriodChange} className="time-period-dropdown">
-          <option value="daily">Daily</option>
-          <option value="weekly">Weekly</option>
-          <option value="monthly">Monthly</option>
-          <option value="yearly">Yearly</option>
-        </select>
-      </div>
-
-      {/* Chart Rendering */}
-      <div className="chart-container">
-        <ResponsiveContainer width="100%" height={400}>
-          <LineChart
-            data={revenueData}
-            margin={{
-              top: 20, right: 30, left: 20, bottom: 5,
-            }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Line type="monotone" dataKey="revenue" stroke="#8884d8" activeDot={{ r: 8 }} />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
+    <div>
+      <Line
+        data={chartData}
+        options={{
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top',
+            },
+            tooltip: {
+              callbacks: {
+                label: (context) => `Revenue: $${context.parsed.y.toFixed(2)}`,
+              },
+            },
+          },
+          scales: {
+            x: {
+              title: {
+                display: true,
+                text: 'Time',
+              },
+            },
+            y: {
+              title: {
+                display: true,
+                text: 'Amount',
+              },
+            },
+          },
+        }}
+      />
     </div>
   );
-}
+};
 
 export default RevenueChart;

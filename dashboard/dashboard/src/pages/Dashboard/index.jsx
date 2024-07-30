@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import RevenueChart from '../../components/RevenueChart';
-import { Card, Container, Row, Col } from 'react-bootstrap';
+import { Card, Container, Row, Col, Dropdown } from 'react-bootstrap';
 import { ShoppingCart, Payment, Group } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 
@@ -11,6 +11,7 @@ function DashBoard() {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [timeFilter, setTimeFilter] = useState('Month'); // Default to Month
 
   useEffect(() => {
     const fetchData = async () => {
@@ -105,7 +106,25 @@ function DashBoard() {
           </Link>
         </Col>
       </Row>
-      <RevenueChart />
+      <Row>
+        <Col md={12} className="mb-4">
+          <Dropdown>
+            <Dropdown.Toggle variant="primary" id="dropdown-basic">
+              Filter by {timeFilter}
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              <Dropdown.Item onClick={() => setTimeFilter('Day')}>Day</Dropdown.Item>
+              <Dropdown.Item onClick={() => setTimeFilter('Month')}>Month</Dropdown.Item>
+              <Dropdown.Item onClick={() => setTimeFilter('Year')}>Year</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+        </Col>
+      </Row>
+      <Row>
+        <Col md={12}>
+          <RevenueChart filter={timeFilter} />
+        </Col>
+      </Row>
     </Container>
   );
 }

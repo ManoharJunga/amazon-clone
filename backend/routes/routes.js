@@ -4,6 +4,13 @@ import path from 'path';
 
 // Import controllers
 import {
+  getRevenues,
+  getRevenue,
+  createRevenue,
+  updateRevenue,
+  deleteRevenue
+} from '../controllers/revenue.controller.js';
+import {
   getDashboard, createDashboard, updateDashboard, deleteDashboard
 } from '../controllers/dashboard.controller.js';
 import {
@@ -135,5 +142,23 @@ router.get('/users/:id', getUser);
 router.post('/users', createUser);
 router.put('/users/:id', updateUser);
 router.delete('/users/:id', deleteUser);
+
+// Get all revenue records
+router.get('/revenues', getRevenues);
+
+// Get a specific revenue record by ID
+router.get('/revenues/:id', getRevenue);
+
+// Create a new revenue record
+router.post('/revenues', createRevenue);
+
+// Update a revenue record
+router.put('/revenues/:id', updateRevenue);
+
+// Delete a revenue record
+router.delete('/revenues/:id', deleteRevenue);
+
+
+
 
 export default router;
