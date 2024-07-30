@@ -21,18 +21,17 @@ export const getProduct = async (req, res) => {
   }
 };
 
-
 // Create a new product
 export const createProduct = async (req, res) => {
   const { name, description, price, category, stock } = req.body;
-  const imagePath = req.file ? req.file.filename : null; // Only save filename
+  const imagePaths = req.files ? req.files.map(file => file.filename) : [];
   const product = new Product({
     name,
     description,
     price,
     category,
     stock,
-    imagePath
+    imagePaths
   });
 
   try {
@@ -46,8 +45,8 @@ export const createProduct = async (req, res) => {
 // Update a product
 export const updateProduct = async (req, res) => {
   const updates = req.body;
-  if (req.file) {
-    updates.imagePath = req.file.filename; // Only save filename
+  if (req.files) {
+    updates.imagePaths = req.files.map(file => file.filename);
   }
 
   try {
@@ -58,7 +57,6 @@ export const updateProduct = async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 };
-
 
 // Delete a product
 export const deleteProduct = async (req, res) => {

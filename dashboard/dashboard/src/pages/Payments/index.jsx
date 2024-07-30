@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Modal, Button } from 'react-bootstrap';
+import { Visibility } from '@mui/icons-material'; // Importing Material-UI icon
+import ExportButton from './ExportButton.jsx'; // Assuming you have ExportButton component in the same directory
 
 const Payments = () => {
   const [payments, setPayments] = useState([]);
@@ -8,6 +10,7 @@ const Payments = () => {
   const [error, setError] = useState(null);
   const [selectedMethod, setSelectedMethod] = useState('All');
   const [sortCriteria, setSortCriteria] = useState('date');
+  const [sortDirection, setSortDirection] = useState('asc'); // State for sorting direction
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedPayment, setSelectedPayment] = useState(null);
   const itemsPerPage = 10;
@@ -16,7 +19,7 @@ const Payments = () => {
     const fetchPayments = async () => {
       setLoading(true);
       setError(null);
-
+  
       try {
         const response = await fetch('http://localhost:5000/api/payments');
         if (!response.ok) {
@@ -31,16 +34,30 @@ const Payments = () => {
         setLoading(false);
       }
     };
-
+  
     fetchPayments();
   }, []);
+  
+
+  const handleSort = (criteria) => {
+    if (sortCriteria === criteria) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortCriteria(criteria);
+      setSortDirection('asc');
+    }
+  };
 
   const sortedPayments = [...payments].sort((a, b) => {
+    let comparison = 0;
+
     if (sortCriteria === 'amount') {
-      return b.amount - a.amount;
+      comparison = a.amount - b.amount;
     } else {
-      return new Date(b.payment_date) - new Date(a.payment_date);
+      comparison = new Date(a.payment_date) - new Date(b.payment_date);
     }
+
+    return sortDirection === 'asc' ? comparison : -comparison;
   });
 
   const filteredPayments = selectedMethod === 'All'
@@ -88,21 +105,28 @@ const Payments = () => {
               id="sortCriteria"
               className="form-select"
               value={sortCriteria}
-              onChange={(e) => setSortCriteria(e.target.value)}
+              onChange={(e) => handleSort(e.target.value)}
             >
               <option value="date">Date</option>
               <option value="amount">Amount</option>
             </select>
+          </div>
+          <div className="mb-4 text-end">
+            <ExportButton payments={payments} />
           </div>
           <div className="table-responsive">
             <table className="table table-striped">
               <thead>
                 <tr>
                   <th>Payment ID</th>
-                  <th>Amount</th>
+                  <th onClick={() => handleSort('amount')}>
+                    Amount {sortCriteria === 'amount' && (sortDirection === 'asc' ? '▲' : '▼')}
+                  </th>
                   <th>Payment Method</th>
                   <th>Status</th>
-                  <th>Date</th>
+                  <th onClick={() => handleSort('date')}>
+                    Date {sortCriteria === 'date' && (sortDirection === 'asc' ? '▲' : '▼')}
+                  </th>
                   <th>Details</th>
                 </tr>
               </thead>
@@ -116,12 +140,15 @@ const Payments = () => {
                       <td className={getStatusClass(payment.payment_status)}>{payment.payment_status}</td>
                       <td>{new Date(payment.payment_date).toLocaleDateString()}</td>
                       <td>
-                        <button
-                          className="btn btn-primary btn-sm"
+                        <Button 
+                          variant="outline-primary" 
                           onClick={() => handleShowDetails(payment)}
+                          style={{ padding: '0.5rem', border: 'none' }} // Adjust padding to fit the icon
                         >
-                          View Details
-                        </button>
+                          <Visibility 
+                            sx={{ fontSize: 20, color: 'black' }} // Icon size and color
+                          />
+                        </Button>
                       </td>
                     </tr>
                   ))

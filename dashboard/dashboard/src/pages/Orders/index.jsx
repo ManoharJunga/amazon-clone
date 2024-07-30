@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Modal, Button } from 'react-bootstrap';
+import ExportButton from '../../components/ExportButton.jsx';
+import { Visibility } from '@mui/icons-material'; // Importing Material-UI icon
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -82,22 +84,27 @@ const Orders = () => {
 
       {!loading && !error && (
         <>
-          <div className="mb-4">
-            <label htmlFor="statusFilter" className="form-label">Filter by Status:</label>
-            <select
-              id="statusFilter"
-              className="form-select"
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-            >
-              <option value="All">All</option>
-              <option value="Pending">Pending</option>
-              <option value="Shipped">Shipped</option>
-              <option value="Delivered">Delivered</option>
-            </select>
+          <div className="mb-4 d-flex justify-content-between align-items-center">
+            <div>
+              <label htmlFor="statusFilter" className="form-label">Filter by Status:</label>
+              <select
+                id="statusFilter"
+                className="form-select"
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+              >
+                <option value="All">All</option>
+                <option value="Pending">Pending</option>
+                <option value="Shipped">Shipped</option>
+                <option value="Delivered">Delivered</option>
+              </select>
+            </div>
+            <div>
+              <ExportButton orders={filteredOrders} />
+            </div>
           </div>
           <div className="table-responsive">
-            <table className="table table-striped">
+            <table className="table table-striped table-sm">
               <thead>
                 <tr>
                   <th onClick={() => handleSort('orderNumber')}>
@@ -128,7 +135,15 @@ const Orders = () => {
                       <td>${order.total_amount.toFixed(2)}</td>
                       <td>{order.shipping_address}</td>
                       <td>
-                        <Button onClick={() => setSelectedOrder(order)}>View Details</Button>
+                        <Button 
+                          variant="outline-primary" 
+                          onClick={() => setSelectedOrder(order)}
+                          style={{ padding: '0.5rem', border: 'none' }} // Adjust padding to fit the icon
+                        >
+                          <Visibility 
+                            sx={{ fontSize: 20, color: 'black' }} // Icon size and color
+                          />
+                        </Button>
                       </td>
                     </tr>
                   ))
@@ -142,7 +157,7 @@ const Orders = () => {
           </div>
           <div className="d-flex justify-content-center mt-4">
             <nav aria-label="Page navigation">
-              <ul className="pagination">
+              <ul className="pagination pagination-sm">
                 <li className="page-item">
                   <button
                     className="page-link"

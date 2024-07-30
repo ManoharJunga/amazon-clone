@@ -6,7 +6,7 @@ const productSchema = new mongoose.Schema({
   price: { type: Number, required: true },
   category: { type: String, required: true },
   stock: { type: Number, required: true },
-  imagePath: { type: String } // Optional: path to the uploaded image
+  imagePaths: [{ type: String }] // Array to store multiple image paths
 }, {
   timestamps: true
 });
