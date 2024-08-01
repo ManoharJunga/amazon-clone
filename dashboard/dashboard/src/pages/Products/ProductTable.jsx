@@ -84,12 +84,16 @@ const ProductTable = () => {
                   <TableCell>{product.name}</TableCell>
                   <TableCell>{product.description}</TableCell>
                   <TableCell>{product.price}</TableCell>
-                  <TableCell>{product.category}</TableCell>
+                  <TableCell>{product.category?.name || 'N/A'}</TableCell> {/* Ensure category is properly formatted */}
                   <TableCell>{product.stock}</TableCell>
                   <TableCell>
-                    <IconButton color="primary" onClick={() => handleOpen(product.imagePath)}>
-                      <ImageIcon />
-                    </IconButton>
+                    {product.imagePath ? (
+                      <IconButton color="primary" onClick={() => handleOpen(product.imagePath)}>
+                        <ImageIcon />
+                      </IconButton>
+                    ) : (
+                      'No Image'
+                    )}
                   </TableCell>
                   <TableCell>
                     <IconButton

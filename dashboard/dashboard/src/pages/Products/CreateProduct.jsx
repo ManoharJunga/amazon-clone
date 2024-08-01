@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { TextField, Button, Box, Typography, IconButton, Grid, Paper, Avatar } from '@mui/material';
+import { TextField, Button, Box, Typography, IconButton, Grid, Paper, Avatar, MenuItem } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import AddBoxIcon from '@mui/icons-material/AddBox';
@@ -14,8 +14,22 @@ const CreateProduct = () => {
     category: '',
     stock: '',
   });
+  const [categories, setCategories] = useState([]);
   const [selectedFile, setSelectedFile] = useState(null);
   const [preview, setPreview] = useState(null);
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/categories');
+      setCategories(response.data);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -96,11 +110,17 @@ const CreateProduct = () => {
             <TextField
               fullWidth
               variant="outlined"
+              select
               label="Category"
-              placeholder="Enter product category"
               value={newProduct.category}
               onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
-            />
+            >
+              {categories.map((category) => (
+                <MenuItem key={category._id} value={category._id}>
+                  {category.name}
+                </MenuItem>
+              ))}
+            </TextField>
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField

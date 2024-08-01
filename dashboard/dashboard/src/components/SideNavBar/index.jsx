@@ -13,6 +13,7 @@ import BrandingWatermarkIcon from '@mui/icons-material/BrandingWatermark';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import Button from '@mui/material/Button';
+import CategoryIcon from '@mui/icons-material/Category';
 import './SideNavBar.css';
 
 function SideNavBar() {
@@ -32,7 +33,8 @@ function SideNavBar() {
         { path: '/chat', label: 'Chat', icon: <ChatIcon /> },
         { path: '/mail', label: 'Mail', icon: <MailIcon /> },
         { path: '/calendar', label: 'Calendar', icon: <CalendarTodayIcon /> },
-        { path: '/brands', label: 'Brands', icon: <BrandingWatermarkIcon /> }
+        { path: '/brands', label: 'Brands', icon: <BrandingWatermarkIcon /> },
+        {path: '/categorymanager', label: 'Category Manager', icon: <CategoryIcon />}
     ];
 
     const bottomMenuItems = [

@@ -15,6 +15,7 @@ import EditProduct from './pages/Products/EditProduct';
 import Calendar from './pages/Calendar';
 import Orders from './pages/Orders';
 import Payments from './pages/Payments';
+import CategoryManager from './pages/CategoryManager';
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
               <Route path='/calendar' element={<Calendar />} />
               <Route path="/orders" element={<Orders />} />
               <Route path="/payments" element={<Payments />} />
+              <Route path="/categorymanager" element={<CategoryManager />} />
               {/* Add more routes as needed */}
             </Routes>
           </div>

@@ -10,6 +10,15 @@ import {
   updateRevenue,
   deleteRevenue
 } from '../controllers/revenue.controller.js';
+
+import {
+  createCategory,
+  getCategories,
+  getCategoryById,
+  updateCategory,
+  deleteCategory
+} from '../controllers/category.controller.js';
+
 import {
   getDashboard, createDashboard, updateDashboard, deleteDashboard
 } from '../controllers/dashboard.controller.js';
@@ -158,6 +167,21 @@ router.put('/revenues/:id', updateRevenue);
 // Delete a revenue record
 router.delete('/revenues/:id', deleteRevenue);
 
+
+// Create a new category
+router.post('/categories', createCategory);
+
+// Get all categories
+router.get('/categories', getCategories);
+
+// Get a single category by ID
+router.get('/categories/:id', getCategoryById);
+
+// Update a category
+router.put('/categories/:id', updateCategory);
+
+// Delete a category
+router.delete('/categories/:id', deleteCategory);
 
 
 
