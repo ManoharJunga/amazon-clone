@@ -12,7 +12,7 @@ function Header() {
                 <p>Hello, Robert Fox</p>
             </div>
             <div className="search-bar">
-                <input type="text" placeholder="Search your products" />
+                <input type="text" placeholder="Search" />
                 <button className="search-button">
                     <SearchIcon />
                 </button>
