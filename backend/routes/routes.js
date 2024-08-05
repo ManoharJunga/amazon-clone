@@ -1,5 +1,4 @@
 import express from 'express';
-import upload from '../config/multer.js';
 
 // Import controllers
 import {
@@ -20,7 +19,7 @@ import {
   getPayments, getPayment, createPayment, updatePayment, deletePayment
 } from '../controllers/payment.controller.js';
 import {
-  getOrders, getOrder, createOrder, updateOrder, deleteOrder
+  getOrders, getOrder, createOrder, updateOrder, deleteOrder, updateOrderStatus
 } from '../controllers/order.controller.js';
 import {
   getOrderItems, getOrderItem, createOrderItem, updateOrderItem, deleteOrderItem
@@ -70,6 +69,8 @@ router.get('/orders/:id', getOrder);
 router.post('/orders', createOrder);
 router.put('/orders/:id', updateOrder);
 router.delete('/orders/:id', deleteOrder);
+router.patch('/orders/:id/status', updateOrderStatus);
+
 
 // Order Item Routes
 router.get('/order_items', getOrderItems);

@@ -32,6 +32,22 @@ export const createOrder = async (req, res) => {
   }
 };
 
+// Update an order's status
+export const updateOrderStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    // Update only the status field
+    const order = await Order.findByIdAndUpdate(id, { status }, { new: true });
+    if (!order) return res.status(404).json({ message: 'Order not found' });
+    res.json(order);
+  } catch (err) {
+    console.error('Error updating order status:', err);
+    res.status(400).json({ message: 'Error updating order status' });
+  }
+};
+
 // Update an order
 export const updateOrder = async (req, res) => {
   try {

@@ -106,7 +106,7 @@ const Orders = () => {
     doc.text(`Date: ${new Date(order.date).toLocaleDateString()}`, 10, 30);
     doc.text(`Total Amount: $${order.total_amount.toFixed(2)}`, 10, 40);
     doc.text(`Shipping Address: ${order.shipping_address}`, 10, 50);
-    
+
     doc.autoTable({
       head: [['Product ID', 'Quantity']],
       body: order.products.map(product => [product.product_id, product.quantity]),
@@ -127,23 +127,25 @@ const Orders = () => {
         <>
           <div className="mb-4 d-flex justify-content-between align-items-center">
             <div>
-              <label htmlFor="statusFilter" className="form-label">Filter by Status:</label>
-              <select
-                id="statusFilter"
-                className="form-select"
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-              >
-                <option value="All">All</option>
-                <option value="Pending">Pending</option>
-                <option value="Shipped">Shipped</option>
-                <option value="Delivered">Delivered</option>
-              </select>
+              <Form.Group controlId="statusFilter">
+                <Form.Label>Filter by Status:</Form.Label>
+                <Form.Control
+                  as="select"
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                >
+                  <option value="All">All</option>
+                  <option value="Pending">Pending</option>
+                  <option value="Shipped">Shipped</option>
+                  <option value="Delivered">Delivered</option>
+                </Form.Control>
+              </Form.Group>
             </div>
             <div>
               <ExportButton orders={filteredOrders} />
             </div>
           </div>
+
           <div className="table-responsive">
             <table className="table table-striped table-sm">
               <thead>
@@ -172,33 +174,36 @@ const Orders = () => {
                     <tr key={order._id}>
                       <td>{order.orderNumber}</td>
                       <td className={getStatusClass(order.status)}>
-                        <Form.Select
-                          value={order.status}
-                          onChange={(e) => handleStatusChange(order._id, e.target.value)}
-                        >
-                          <option value="Pending">Pending</option>
-                          <option value="Shipped">Shipped</option>
-                          <option value="Delivered">Delivered</option>
-                        </Form.Select>
+                        {order.status}
                       </td>
                       <td>{new Date(order.date).toLocaleDateString()}</td>
                       <td>${order.total_amount.toFixed(2)}</td>
                       <td>{order.shipping_address}</td>
                       <td>
-                        <Button 
-                          variant="outline-primary" 
-                          onClick={() => setSelectedOrder(order)}
-                          style={{ padding: '0.5rem', border: 'none' }}
-                        >
-                          <Visibility sx={{ fontSize: 20, color: 'black' }} />
-                        </Button>
-                        <Button 
-                          variant="outline-secondary" 
-                          onClick={() => printPDF(order)}
-                          style={{ marginLeft: '0.5rem' }}
-                        >
-                          <PrintIcon sx={{ fontSize: 20 }} />
-                        </Button>
+                        <div className="d-flex align-items-center">
+                          <Form.Select
+                            value={order.status}
+                            onChange={(e) => handleStatusChange(order._id, e.target.value)}
+                            style={{ width: '150px', marginRight: '10px' }}
+                          >
+                            <option value="Pending">Pending</option>
+                            <option value="Shipped">Shipped</option>
+                            <option value="Delivered">Delivered</option>
+                          </Form.Select>
+                          <Button
+                            variant="outline-primary"
+                            onClick={() => setSelectedOrder(order)}
+                            style={{ marginRight: '0.5rem' }}
+                          >
+                            <Visibility sx={{ fontSize: 20, color: 'black' }} />
+                          </Button>
+                          <Button
+                            variant="outline-secondary"
+                            onClick={() => printPDF(order)}
+                          >
+                            <PrintIcon sx={{ fontSize: 20 }} />
+                          </Button>
+                        </div>
                       </td>
                     </tr>
                   ))
@@ -210,6 +215,7 @@ const Orders = () => {
               </tbody>
             </table>
           </div>
+
           <div className="d-flex justify-content-center mt-4">
             <nav aria-label="Page navigation">
               <ul className="pagination pagination-sm">
