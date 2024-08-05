@@ -39,7 +39,8 @@ export const updateOrder = async (req, res) => {
     if (!order) return res.status(404).json({ message: 'Order not found' });
     res.json(order);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    console.error('Error updating order:', err);
+    res.status(400).json({ message: 'Error updating order' });
   }
 };
 

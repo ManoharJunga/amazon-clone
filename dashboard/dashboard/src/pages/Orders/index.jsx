@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Modal, Button } from 'react-bootstrap';
+import { Modal, Button, Form } from 'react-bootstrap';
 import ExportButton from '../../components/ExportButton.jsx';
-import { Visibility } from '@mui/icons-material'; // Importing Material-UI icon
+import { Visibility, Print as PrintIcon } from '@mui/icons-material';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -56,6 +58,28 @@ const Orders = () => {
     setSortConfig({ key, direction });
   };
 
+  const handleStatusChange = async (orderId, newStatus) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/orders/${orderId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      setOrders(orders.map(order =>
+        order._id === orderId ? { ...order, status: newStatus } : order
+      ));
+    } catch (error) {
+      console.error('Error updating status:', error);
+    }
+  };
+
   const sortedOrders = [...orders].sort((a, b) => {
     if (a[sortConfig.key] < b[sortConfig.key]) {
       return sortConfig.direction === 'asc' ? -1 : 1;
@@ -74,6 +98,23 @@ const Orders = () => {
   const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedOrders = filteredOrders.slice(startIndex, startIndex + itemsPerPage);
+
+  const printPDF = (order) => {
+    const doc = new jsPDF();
+    doc.text(`Order Number: ${order.orderNumber}`, 10, 10);
+    doc.text(`Status: ${order.status}`, 10, 20);
+    doc.text(`Date: ${new Date(order.date).toLocaleDateString()}`, 10, 30);
+    doc.text(`Total Amount: $${order.total_amount.toFixed(2)}`, 10, 40);
+    doc.text(`Shipping Address: ${order.shipping_address}`, 10, 50);
+    
+    doc.autoTable({
+      head: [['Product ID', 'Quantity']],
+      body: order.products.map(product => [product.product_id, product.quantity]),
+      startY: 60,
+    });
+
+    doc.save(`Order_${order.orderNumber}.pdf`);
+  };
 
   return (
     <div className="container mt-4">
@@ -130,7 +171,16 @@ const Orders = () => {
                   paginatedOrders.map(order => (
                     <tr key={order._id}>
                       <td>{order.orderNumber}</td>
-                      <td className={getStatusClass(order.status)}>{order.status}</td>
+                      <td className={getStatusClass(order.status)}>
+                        <Form.Select
+                          value={order.status}
+                          onChange={(e) => handleStatusChange(order._id, e.target.value)}
+                        >
+                          <option value="Pending">Pending</option>
+                          <option value="Shipped">Shipped</option>
+                          <option value="Delivered">Delivered</option>
+                        </Form.Select>
+                      </td>
                       <td>{new Date(order.date).toLocaleDateString()}</td>
                       <td>${order.total_amount.toFixed(2)}</td>
                       <td>{order.shipping_address}</td>
@@ -138,11 +188,16 @@ const Orders = () => {
                         <Button 
                           variant="outline-primary" 
                           onClick={() => setSelectedOrder(order)}
-                          style={{ padding: '0.5rem', border: 'none' }} // Adjust padding to fit the icon
+                          style={{ padding: '0.5rem', border: 'none' }}
                         >
-                          <Visibility 
-                            sx={{ fontSize: 20, color: 'black' }} // Icon size and color
-                          />
+                          <Visibility sx={{ fontSize: 20, color: 'black' }} />
+                        </Button>
+                        <Button 
+                          variant="outline-secondary" 
+                          onClick={() => printPDF(order)}
+                          style={{ marginLeft: '0.5rem' }}
+                        >
+                          <PrintIcon sx={{ fontSize: 20 }} />
                         </Button>
                       </td>
                     </tr>

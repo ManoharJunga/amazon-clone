@@ -1,22 +1,13 @@
 import express from 'express';
-import multer from 'multer';
-import path from 'path';
+import upload from '../config/multer.js';
 
 // Import controllers
 import {
-  getRevenues,
-  getRevenue,
-  createRevenue,
-  updateRevenue,
-  deleteRevenue
+  getRevenues, getRevenue, createRevenue, updateRevenue, deleteRevenue
 } from '../controllers/revenue.controller.js';
 
 import {
-  createCategory,
-  getCategories,
-  getCategoryById,
-  updateCategory,
-  deleteCategory
+  createCategory, getCategories, getCategoryById, updateCategory, deleteCategory
 } from '../controllers/category.controller.js';
 
 import {
@@ -25,9 +16,6 @@ import {
 import {
   getCustomers, getCustomer, createCustomer, updateCustomer, deleteCustomer
 } from '../controllers/customer.controller.js';
-import {
-  getProducts, getProduct, createProduct, updateProduct, deleteProduct
-} from '../controllers/product.controller.js';
 import {
   getPayments, getPayment, createPayment, updatePayment, deletePayment
 } from '../controllers/payment.controller.js';
@@ -53,27 +41,7 @@ import {
   getUsers, getUser, createUser, updateUser, deleteUser
 } from '../controllers/user.controller.js';
 
-// Configure multer for file uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/');
-  },
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
-  }
-});
-
-const fileFilter = (req, file, cb) => {
-  const ext = path.extname(file.originalname).toLowerCase();
-  if (ext === '.jpg' || ext === '.jpeg' || ext === '.png') {
-    cb(null, true);
-  } else {
-    cb(new Error('Only .jpg, .jpeg, .png files are allowed'), false);
-  }
-};
-
-const upload = multer({ storage, fileFilter });
-
+// Routes
 const router = express.Router();
 
 // Dashboard Routes
@@ -88,13 +56,6 @@ router.get('/customers/:id', getCustomer);
 router.post('/customers', createCustomer);
 router.put('/customers/:id', updateCustomer);
 router.delete('/customers/:id', deleteCustomer);
-
-// Product Routes
-router.get('/products', getProducts);
-router.get('/products/:id', getProduct);
-router.post('/products', upload.single('image'), createProduct);
-router.put('/products/:id', upload.single('image'), updateProduct);
-router.delete('/products/:id', deleteProduct);
 
 // Payment Routes
 router.get('/payments', getPayments);
@@ -152,37 +113,18 @@ router.post('/users', createUser);
 router.put('/users/:id', updateUser);
 router.delete('/users/:id', deleteUser);
 
-// Get all revenue records
+// Revenue Routes
 router.get('/revenues', getRevenues);
-
-// Get a specific revenue record by ID
 router.get('/revenues/:id', getRevenue);
-
-// Create a new revenue record
 router.post('/revenues', createRevenue);
-
-// Update a revenue record
 router.put('/revenues/:id', updateRevenue);
-
-// Delete a revenue record
 router.delete('/revenues/:id', deleteRevenue);
 
-
-// Create a new category
+// Category Routes
 router.post('/categories', createCategory);
-
-// Get all categories
 router.get('/categories', getCategories);
-
-// Get a single category by ID
 router.get('/categories/:id', getCategoryById);
-
-// Update a category
 router.put('/categories/:id', updateCategory);
-
-// Delete a category
 router.delete('/categories/:id', deleteCategory);
-
-
 
 export default router;

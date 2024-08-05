@@ -6,6 +6,9 @@ import authRoutes from "./routes/auth.js"; // Update path if necessary
 import routes from "./routes/routes.js";
 import path from "path";
 import { fileURLToPath } from 'url';
+import dotenv from 'dotenv'; // Add dotenv
+
+dotenv.config(); // Load environment variables
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -13,7 +16,7 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-mongoose.connect('mongodb://localhost:27017/spotit', { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.log(err));
 

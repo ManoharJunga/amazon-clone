@@ -1,5 +1,41 @@
+// backend/controllers/product.controller.js
 import Product from '../models/product.model.js';
 import Category from '../models/category.model.js';
+import cloudinary from '../config/cloudinary.js';
+
+// Create a new product
+export const createProduct = async (req, res) => {
+  const { name, description, price, category, stock } = req.body;
+
+  try {
+    // Check if category exists
+    const categoryExists = await Category.findById(category);
+    if (!categoryExists) {
+      return res.status(400).json({ message: 'Invalid category' });
+    }
+
+    // Upload images to Cloudinary
+    const imageUploadPromises = Array.from(req.files.images).map(file =>
+      cloudinary.v2.uploader.upload(file.path)
+    );
+    const uploadResponses = await Promise.all(imageUploadPromises);
+    const imageUrls = uploadResponses.map(response => response.secure_url);
+
+    const product = new Product({
+      name,
+      description,
+      price,
+      category,
+      stock,
+      images: imageUrls
+    });
+
+    const newProduct = await product.save();
+    res.status(201).json(newProduct);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
 
 // Get all products
 export const getProducts = async (req, res) => {
@@ -22,39 +58,16 @@ export const getProduct = async (req, res) => {
   }
 };
 
-// Create a new product
-export const createProduct = async (req, res) => {
-  const { name, description, price, category, stock } = req.body;
-
-  try {
-    // Check if category exists
-    const categoryExists = await Category.findById(category);
-    if (!categoryExists) {
-      return res.status(400).json({ message: 'Invalid category' });
-    }
-
-    const imagePaths = req.files ? req.files.map(file => file.filename) : [];
-    const product = new Product({
-      name,
-      description,
-      price,
-      category,
-      stock,
-      imagePaths
-    });
-
-    const newProduct = await product.save();
-    res.status(201).json(newProduct);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-};
-
 // Update a product
 export const updateProduct = async (req, res) => {
   const updates = req.body;
-  if (req.files) {
-    updates.imagePaths = req.files.map(file => file.filename);
+  if (req.files && req.files.images) {
+    // Upload images to Cloudinary
+    const imageUploadPromises = Array.from(req.files.images).map(file =>
+      cloudinary.v2.uploader.upload(file.path)
+    );
+    const uploadResponses = await Promise.all(imageUploadPromises);
+    updates.images = uploadResponses.map(response => response.secure_url);
   }
 
   try {
