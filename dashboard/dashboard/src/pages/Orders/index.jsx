@@ -6,6 +6,44 @@ import { Visibility, Print as PrintIcon } from '@mui/icons-material';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
+// Pagination Component
+const Pagination = ({ currentPage, totalPages, onPageChange }) => (
+  <div className="d-flex justify-content-center mt-4">
+    <nav aria-label="Page navigation">
+      <ul className="pagination pagination-sm">
+        <li className="page-item">
+          <button
+            className="page-link"
+            onClick={() => onPageChange(Math.max(currentPage - 1, 1))}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </button>
+        </li>
+        {[...Array(totalPages).keys()].map(number => (
+          <li key={number} className={`page-item ${number + 1 === currentPage ? 'active' : ''}`}>
+            <button
+              className="page-link"
+              onClick={() => onPageChange(number + 1)}
+            >
+              {number + 1}
+            </button>
+          </li>
+        ))}
+        <li className="page-item">
+          <button
+            className="page-link"
+            onClick={() => onPageChange(Math.min(currentPage + 1, totalPages))}
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </button>
+        </li>
+      </ul>
+    </nav>
+  </div>
+);
+
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [statusFilter, setStatusFilter] = useState('All');
@@ -21,80 +59,54 @@ const Orders = () => {
       setLoading(true);
       try {
         const response = await fetch('http://localhost:5000/api/orders/');
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
+        if (!response.ok) throw new Error('Network response was not ok');
         const data = await response.json();
         setOrders(data);
       } catch (error) {
-        console.error('Error fetching orders:', error);
-        setError(error.message);
+        setError('Failed to fetch orders');
       } finally {
         setLoading(false);
       }
     };
-
     fetchOrders();
   }, []);
 
   const getStatusClass = (status) => {
     switch (status) {
-      case 'Pending':
-        return 'text-warning';
-      case 'Shipped':
-        return 'text-info';
-      case 'Delivered':
-        return 'text-success';
-      default:
-        return 'text-muted';
+      case 'Pending': return 'text-warning';
+      case 'Shipped': return 'text-info';
+      case 'Delivered': return 'text-success';
+      default: return 'text-muted';
     }
   };
 
   const handleSort = (key) => {
-    let direction = 'asc';
-    if (sortConfig.key === key && sortConfig.direction === 'asc') {
-      direction = 'desc';
-    }
+    const direction = sortConfig.key === key && sortConfig.direction === 'asc' ? 'desc' : 'asc';
     setSortConfig({ key, direction });
   };
 
   const handleStatusChange = async (orderId, newStatus) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/orders/${orderId}`, {
+      const response = await fetch(`http://localhost:5000/api/orders/${orderId}/status`, {
         method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus }),
       });
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      setOrders(orders.map(order =>
-        order._id === orderId ? { ...order, status: newStatus } : order
-      ));
+      if (!response.ok) throw new Error('Network response was not ok');
+      setOrders(orders.map(order => order._id === orderId ? { ...order, status: newStatus } : order));
     } catch (error) {
       console.error('Error updating status:', error);
     }
   };
 
   const sortedOrders = [...orders].sort((a, b) => {
-    if (a[sortConfig.key] < b[sortConfig.key]) {
-      return sortConfig.direction === 'asc' ? -1 : 1;
-    }
-    if (a[sortConfig.key] > b[sortConfig.key]) {
-      return sortConfig.direction === 'asc' ? 1 : -1;
-    }
+    if (a[sortConfig.key] < b[sortConfig.key]) return sortConfig.direction === 'asc' ? -1 : 1;
+    if (a[sortConfig.key] > b[sortConfig.key]) return sortConfig.direction === 'asc' ? 1 : -1;
     return 0;
   });
 
-  const filteredOrders = statusFilter === 'All'
-    ? sortedOrders
-    : sortedOrders.filter(order => order.status === statusFilter);
+  const filteredOrders = statusFilter === 'All' ? sortedOrders : sortedOrders.filter(order => order.status === statusFilter);
 
-  // Pagination logic
   const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedOrders = filteredOrders.slice(startIndex, startIndex + itemsPerPage);
@@ -106,13 +118,11 @@ const Orders = () => {
     doc.text(`Date: ${new Date(order.date).toLocaleDateString()}`, 10, 30);
     doc.text(`Total Amount: $${order.total_amount.toFixed(2)}`, 10, 40);
     doc.text(`Shipping Address: ${order.shipping_address}`, 10, 50);
-
     doc.autoTable({
       head: [['Product ID', 'Quantity']],
       body: order.products.map(product => [product.product_id, product.quantity]),
       startY: 60,
     });
-
     doc.save(`Order_${order.orderNumber}.pdf`);
   };
 
@@ -127,25 +137,23 @@ const Orders = () => {
         <>
           <div className="mb-4 d-flex justify-content-between align-items-center">
             <div>
-              <Form.Group controlId="statusFilter">
-                <Form.Label>Filter by Status:</Form.Label>
-                <Form.Control
-                  as="select"
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
-                >
-                  <option value="All">All</option>
-                  <option value="Pending">Pending</option>
-                  <option value="Shipped">Shipped</option>
-                  <option value="Delivered">Delivered</option>
-                </Form.Control>
-              </Form.Group>
+              <label htmlFor="statusFilter" className="form-label">Filter by Status:</label>
+              <select
+                id="statusFilter"
+                className="form-select"
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+              >
+                <option value="All">All</option>
+                <option value="Pending">Pending</option>
+                <option value="Shipped">Shipped</option>
+                <option value="Delivered">Delivered</option>
+              </select>
             </div>
             <div>
               <ExportButton orders={filteredOrders} />
             </div>
           </div>
-
           <div className="table-responsive">
             <table className="table table-striped table-sm">
               <thead>
@@ -174,36 +182,33 @@ const Orders = () => {
                     <tr key={order._id}>
                       <td>{order.orderNumber}</td>
                       <td className={getStatusClass(order.status)}>
-                        {order.status}
+                        <Form.Select
+                          value={order.status}
+                          onChange={(e) => handleStatusChange(order._id, e.target.value)}
+                        >
+                          <option value="Pending">Pending</option>
+                          <option value="Shipped">Shipped</option>
+                          <option value="Delivered">Delivered</option>
+                        </Form.Select>
                       </td>
                       <td>{new Date(order.date).toLocaleDateString()}</td>
                       <td>${order.total_amount.toFixed(2)}</td>
                       <td>{order.shipping_address}</td>
                       <td>
-                        <div className="d-flex align-items-center">
-                          <Form.Select
-                            value={order.status}
-                            onChange={(e) => handleStatusChange(order._id, e.target.value)}
-                            style={{ width: '150px', marginRight: '10px' }}
-                          >
-                            <option value="Pending">Pending</option>
-                            <option value="Shipped">Shipped</option>
-                            <option value="Delivered">Delivered</option>
-                          </Form.Select>
-                          <Button
-                            variant="outline-primary"
-                            onClick={() => setSelectedOrder(order)}
-                            style={{ marginRight: '0.5rem' }}
-                          >
-                            <Visibility sx={{ fontSize: 20, color: 'black' }} />
-                          </Button>
-                          <Button
-                            variant="outline-secondary"
-                            onClick={() => printPDF(order)}
-                          >
-                            <PrintIcon sx={{ fontSize: 20 }} />
-                          </Button>
-                        </div>
+                        <Button 
+                          variant="outline-primary" 
+                          onClick={() => setSelectedOrder(order)}
+                          style={{ padding: '0.5rem', border: 'none' }}
+                        >
+                          <Visibility sx={{ fontSize: 20, color: 'black' }} />
+                        </Button>
+                        <Button 
+                          variant="outline-secondary" 
+                          onClick={() => printPDF(order)}
+                          style={{ marginLeft: '0.5rem' }}
+                        >
+                          <PrintIcon sx={{ fontSize: 20 }} />
+                        </Button>
                       </td>
                     </tr>
                   ))
@@ -215,41 +220,11 @@ const Orders = () => {
               </tbody>
             </table>
           </div>
-
-          <div className="d-flex justify-content-center mt-4">
-            <nav aria-label="Page navigation">
-              <ul className="pagination pagination-sm">
-                <li className="page-item">
-                  <button
-                    className="page-link"
-                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                    disabled={currentPage === 1}
-                  >
-                    Previous
-                  </button>
-                </li>
-                {[...Array(totalPages).keys()].map(number => (
-                  <li key={number} className={`page-item ${number + 1 === currentPage ? 'active' : ''}`}>
-                    <button
-                      className="page-link"
-                      onClick={() => setCurrentPage(number + 1)}
-                    >
-                      {number + 1}
-                    </button>
-                  </li>
-                ))}
-                <li className="page-item">
-                  <button
-                    className="page-link"
-                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                    disabled={currentPage === totalPages}
-                  >
-                    Next
-                  </button>
-                </li>
-              </ul>
-            </nav>
-          </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
         </>
       )}
 
