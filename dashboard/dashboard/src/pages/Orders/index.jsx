@@ -1,14 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Modal, Button, Form } from 'react-bootstrap';
+import { Modal, Button, Form, Spinner, Table } from 'react-bootstrap';
 import ExportButton from '../../components/ExportButton.jsx';
-import { Visibility, Print as PrintIcon } from '@mui/icons-material';
+import { Visibility, Print as PrintIcon, Search as SearchIcon } from '@mui/icons-material';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import { CSVLink } from 'react-csv';
+
+import { ExcelRenderer } from 'react-excel-renderer';
 
 // Pagination Component
-const Pagination = ({ currentPage, totalPages, onPageChange }) => (
-  <div className="d-flex justify-content-center mt-4">
+const Pagination = ({ currentPage, totalPages, onPageChange, onItemsPerPageChange }) => (
+  <div className="d-flex justify-content-between align-items-center mt-4">
+    <div>
+      <Form.Select 
+        aria-label="Items per page" 
+        onChange={(e) => onItemsPerPageChange(Number(e.target.value))}
+        style={{ maxWidth: '120px' }}
+      >
+        <option value={10}>10 per page</option>
+        <option value={25}>25 per page</option>
+        <option value={50}>50 per page</option>
+      </Form.Select>
+    </div>
     <nav aria-label="Page navigation">
       <ul className="pagination pagination-sm">
         <li className="page-item">
@@ -47,12 +61,15 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => (
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [statusFilter, setStatusFilter] = useState('All');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [dateRange, setDateRange] = useState([null, null]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [sortConfig, setSortConfig] = useState({ key: '', direction: 'asc' });
   const [selectedOrder, setSelectedOrder] = useState(null);
-  const itemsPerPage = 10;
+  const [selectedOrders, setSelectedOrders] = useState([]);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -99,13 +116,38 @@ const Orders = () => {
     }
   };
 
+  const handleBulkStatusChange = async (newStatus) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/orders/bulk-update`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderIds: selectedOrders, status: newStatus }),
+      });
+      if (!response.ok) throw new Error('Network response was not ok');
+      setOrders(orders.map(order => 
+        selectedOrders.includes(order._id) ? { ...order, status: newStatus } : order
+      ));
+      setSelectedOrders([]);
+    } catch (error) {
+      console.error('Error updating statuses:', error);
+    }
+  };
+
   const sortedOrders = [...orders].sort((a, b) => {
-    if (a[sortConfig.key] < b[sortConfig.key]) return sortConfig.direction === 'asc' ? -1 : 1;
-    if (a[sortConfig.key] > b[sortConfig.key]) return sortConfig.direction === 'asc' ? 1 : -1;
+    if (sortConfig.key) {
+      if (a[sortConfig.key] < b[sortConfig.key]) return sortConfig.direction === 'asc' ? -1 : 1;
+      if (a[sortConfig.key] > b[sortConfig.key]) return sortConfig.direction === 'asc' ? 1 : -1;
+    }
     return 0;
   });
 
-  const filteredOrders = statusFilter === 'All' ? sortedOrders : sortedOrders.filter(order => order.status === statusFilter);
+  const filteredOrders = sortedOrders
+    .filter(order => 
+      (statusFilter === 'All' || order.status === statusFilter) &&
+      (order.orderNumber.includes(searchQuery) || order.shipping_address.includes(searchQuery)) &&
+      (dateRange[0] ? new Date(order.date) >= new Date(dateRange[0]) : true) &&
+      (dateRange[1] ? new Date(order.date) <= new Date(dateRange[1]) : true)
+    );
 
   const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -130,13 +172,13 @@ const Orders = () => {
     <div className="container mt-4">
       <h1 className="mb-4 text-center">Order Dashboard</h1>
 
-      {loading && <p className="text-center">Loading...</p>}
+      {loading && <div className="text-center"><Spinner animation="border" /></div>}
       {error && <div className="alert alert-danger text-center" role="alert">{error}</div>}
 
       {!loading && !error && (
         <>
-          <div className="mb-4 d-flex justify-content-between align-items-center">
-            <div>
+          <div className="mb-4 d-flex flex-column flex-sm-row justify-content-between align-items-center">
+            <div className="mb-3 mb-sm-0">
               <label htmlFor="statusFilter" className="form-label">Filter by Status:</label>
               <select
                 id="statusFilter"
@@ -150,112 +192,138 @@ const Orders = () => {
                 <option value="Delivered">Delivered</option>
               </select>
             </div>
-            <div>
-              <ExportButton orders={filteredOrders} />
+            <div className="mb-3 mb-sm-0">
+              <label htmlFor="dateRange" className="form-label">Date Range:</label>
+              <Form.Control 
+                type="date"
+                value={dateRange[0] || ''}
+                onChange={(e) => setDateRange([e.target.value, dateRange[1]])}
+              />
+              <Form.Control 
+                type="date"
+                value={dateRange[1] || ''}
+                onChange={(e) => setDateRange([dateRange[0], e.target.value])}
+                style={{ marginTop: '0.5rem' }}
+              />
+            </div>
+            <div className="mb-3 mb-sm-0 d-flex align-items-center">
+              <Form.Control 
+                type="text"
+                placeholder="Search by Order Number or Address"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <Button 
+                variant="outline-primary" 
+                className="ms-2" 
+                onClick={() => setSearchQuery('')}
+              >
+                <SearchIcon />
+              </Button>
             </div>
           </div>
-          <div className="table-responsive">
-            <table className="table table-striped table-sm">
-              <thead>
-                <tr>
-                  <th onClick={() => handleSort('orderNumber')}>
-                    Order Number {sortConfig.key === 'orderNumber' && (sortConfig.direction === 'asc' ? '▲' : '▼')}
-                  </th>
-                  <th onClick={() => handleSort('status')}>
-                    Status {sortConfig.key === 'status' && (sortConfig.direction === 'asc' ? '▲' : '▼')}
-                  </th>
-                  <th onClick={() => handleSort('date')}>
-                    Date {sortConfig.key === 'date' && (sortConfig.direction === 'asc' ? '▲' : '▼')}
-                  </th>
-                  <th onClick={() => handleSort('total_amount')}>
-                    Total Amount {sortConfig.key === 'total_amount' && (sortConfig.direction === 'asc' ? '▲' : '▼')}
-                  </th>
-                  <th onClick={() => handleSort('shipping_address')}>
-                    Shipping Address {sortConfig.key === 'shipping_address' && (sortConfig.direction === 'asc' ? '▲' : '▼')}
-                  </th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {paginatedOrders.length > 0 ? (
-                  paginatedOrders.map(order => (
-                    <tr key={order._id}>
-                      <td>{order.orderNumber}</td>
-                      <td className={getStatusClass(order.status)}>
-                        <Form.Select
-                          value={order.status}
-                          onChange={(e) => handleStatusChange(order._id, e.target.value)}
-                        >
-                          <option value="Pending">Pending</option>
-                          <option value="Shipped">Shipped</option>
-                          <option value="Delivered">Delivered</option>
-                        </Form.Select>
-                      </td>
-                      <td>{new Date(order.date).toLocaleDateString()}</td>
-                      <td>${order.total_amount.toFixed(2)}</td>
-                      <td>{order.shipping_address}</td>
-                      <td>
-                        <Button 
-                          variant="outline-primary" 
-                          onClick={() => setSelectedOrder(order)}
-                          style={{ padding: '0.5rem', border: 'none' }}
-                        >
-                          <Visibility sx={{ fontSize: 20, color: 'black' }} />
-                        </Button>
-                        <Button 
-                          variant="outline-secondary" 
-                          onClick={() => printPDF(order)}
-                          style={{ marginLeft: '0.5rem' }}
-                        >
-                          <PrintIcon sx={{ fontSize: 20 }} />
-                        </Button>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="6" className="text-center">No orders available.</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+
+          <div className="mb-3 d-flex justify-content-end">
+            <ExportButton
+              data={filteredOrders}
+              filename="orders.csv"
+              type="csv"
+            />
+            <CSVLink
+              data={filteredOrders}
+              filename={"orders.csv"}
+              className="btn btn-outline-primary ms-2"
+            >
+              Export CSV
+            </CSVLink>
           </div>
+
+          <Table striped bordered hover>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Order Number</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Total Amount</th>
+                <th>Shipping Address</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {paginatedOrders.map((order, index) => (
+                <tr key={order._id}>
+                  <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
+                  <td>{order.orderNumber}</td>
+                  <td className={getStatusClass(order.status)}>{order.status}</td>
+                  <td>{new Date(order.date).toLocaleDateString()}</td>
+                  <td>${order.total_amount.toFixed(2)}</td>
+                  <td>{order.shipping_address}</td>
+                  <td>
+                    <Button 
+                      variant="outline-primary" 
+                      className="me-2"
+                      onClick={() => printPDF(order)}
+                    >
+                      <PrintIcon />
+                    </Button>
+                    <Button 
+                      variant="outline-info"
+                      onClick={() => setSelectedOrder(order)}
+                    >
+                      <Visibility />
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={setCurrentPage}
+            onItemsPerPageChange={setItemsPerPage}
           />
+
+          <Modal show={selectedOrder !== null} onHide={() => setSelectedOrder(null)}>
+            <Modal.Header closeButton>
+              <Modal.Title>Order Details</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              {selectedOrder && (
+                <div>
+                  <h4>Order Number: {selectedOrder.orderNumber}</h4>
+                  <p>Status: {selectedOrder.status}</p>
+                  <p>Date: {new Date(selectedOrder.date).toLocaleDateString()}</p>
+                  <p>Total Amount: ${selectedOrder.total_amount.toFixed(2)}</p>
+                  <p>Shipping Address: {selectedOrder.shipping_address}</p>
+                  <h5>Products</h5>
+                  <Table striped bordered>
+                    <thead>
+                      <tr>
+                        <th>Product ID</th>
+                        <th>Quantity</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {selectedOrder.products.map(product => (
+                        <tr key={product.product_id}>
+                          <td>{product.product_id}</td>
+                          <td>{product.quantity}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
+                </div>
+              )}
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={() => setSelectedOrder(null)}>Close</Button>
+            </Modal.Footer>
+          </Modal>
         </>
       )}
-
-      <Modal show={!!selectedOrder} onHide={() => setSelectedOrder(null)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Order Details</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {selectedOrder && (
-            <>
-              <h5>Order Number: {selectedOrder.orderNumber}</h5>
-              <p><strong>Status:</strong> {selectedOrder.status}</p>
-              <p><strong>Date:</strong> {new Date(selectedOrder.date).toLocaleDateString()}</p>
-              <p><strong>Total Amount:</strong> ${selectedOrder.total_amount.toFixed(2)}</p>
-              <p><strong>Shipping Address:</strong> {selectedOrder.shipping_address}</p>
-              <h6>Products:</h6>
-              <ul>
-                {selectedOrder.products.map((product, index) => (
-                  <li key={index}>
-                    <div>Product ID: {product.product_id}</div>
-                    <div>Quantity: {product.quantity}</div>
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setSelectedOrder(null)}>Close</Button>
-        </Modal.Footer>
-      </Modal>
     </div>
   );
 };
